@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOC P1</title>
+<title>Quiz with Notes</title>
 
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,7 +53,6 @@ body {
     padding: 24px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    /* Inalis ang overflow: hidden para makita ang dropdown */
 }
 
 @media (min-width: 640px) {
@@ -93,14 +92,14 @@ body {
     transform: translateY(-1px);
 }
 
-/* Options / Settings Modal */
+/* Modal Styling */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(15, 23, 42, 0.75);
+    background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
@@ -110,22 +109,25 @@ body {
 }
 
 .modal-content {
-    background: #1e1b4b;
+    background: rgba(30, 27, 75, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
     padding: 24px;
     width: 100%;
     max-width: 420px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .modal-header {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 12px;
+    margin-bottom: 4px;
 }
 
 .modal-header h3 {
@@ -135,42 +137,28 @@ body {
 }
 
 .setting-group {
-    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .setting-group label {
     display: block;
     font-size: 0.85rem;
-    margin-bottom: 8px;
     color: #c7d2fe;
-}
-
-.setting-control {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    color: #ffffff;
-    outline: none;
-    font-family: inherit;
-}
-
-.setting-control option {
-    background: #1e1b4b;
-    color: #ffffff;
+    font-weight: 500;
 }
 
 .toggle-switch-btn {
     width: 100%;
+    height: 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 0 16px;
+    border-radius: 12px;
     color: #ffffff;
     cursor: pointer;
     font-size: 0.9rem;
@@ -255,8 +243,8 @@ h2#questionText {
     line-height: 1.5;
 }
 
-/* Action Buttons & Inputs */
-button, select {
+/* Action Buttons */
+button {
     font-family: inherit;
     font-weight: 500;
     padding: 10px 14px;
@@ -269,7 +257,7 @@ button, select {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-button:hover:not(:disabled), select:hover {
+button:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0,0,0,0.2);
@@ -378,7 +366,7 @@ button:disabled {
     margin-bottom: 20px;
 }
 
-/* --- CUSTOM DROPDOWN STYLES (New) --- */
+/* --- CUSTOM UI DROPDOWN COMPONENT --- */
 .custom-dropdown {
     position: relative;
     width: 100%;
@@ -392,7 +380,8 @@ button:disabled {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 12px 16px;
+    height: 48px;
+    padding: 0 16px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
@@ -419,25 +408,24 @@ button:disabled {
     top: calc(100% + 6px);
     left: 0;
     width: 100%;
-    background: #1e1b4b; /* Solid color matching theme */
+    background: #1e1b4b;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    max-height: 250px; /* Limit height */
-    overflow-y: auto; /* Scrollable if many options */
-    z-index: 10;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1050;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
 }
 
-/* Scrollbar styling for the list */
 .dropdown-list::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 .dropdown-list::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
@@ -469,12 +457,12 @@ button:disabled {
 }
 
 .dropdown-list-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .dropdown-list-item.selected {
-    background: rgba(99, 102, 241, 0.2); /* Indigo tint */
-    color: #818cf8; /* Light Indigo */
+    background: rgba(99, 102, 241, 0.25);
+    color: #818cf8;
     font-weight: 600;
 }
 
@@ -500,25 +488,6 @@ button:disabled {
     height: 10px;
     background-color: #818cf8;
     border-radius: 50%;
-}
-/* ------------------------------------------- */
-
-/* Para sa Category Filter sa Review Screen, panatilihin ang simpleng style pero lagyan ng tamang background */
-.category-select-box {
-    width: 100%;
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    margin-bottom: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    outline: none;
-    color: #ffffff;
-}
-
-.category-select-box option {
-    background: #1e1b4b;
-    color: #ffffff;
 }
 
 #startScreen button.start-action-btn {
@@ -576,7 +545,6 @@ button:disabled {
     font-size: 0.85rem;
 }
 
-/* Review Card and Notes CSS */
 .review-card {
     background: rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -676,17 +644,14 @@ button:disabled {
 
         <button type="button" id="resumeBtn" class="start-action-btn hidden" onclick="resumeQuiz()">▶ Resume Progress</button>
 
-        <!-- BINAGO: Native select pinalitan ng Custom Dropdown structure -->
+        <!-- Category Dropdown -->
         <div class="custom-dropdown" id="categoryDropdown">
-            <div class="dropdown-select" onclick="toggleDropdown()">
+            <div class="dropdown-select" onclick="toggleDropdown('categoryDropdown')">
                 <span id="selectedCategoryText">All Categories</span>
                 <span class="arrow">▼</span>
             </div>
-            <div class="dropdown-list" id="categoryList">
-                <!-- Dito ilalagay ng JS ang mga options -->
-            </div>
+            <div class="dropdown-list" id="categoryList"></div>
         </div>
-        <!-- Hidden input para itago ang napiling value para sa JS logic -->
         <input type="hidden" id="categorySelectValue" value="All">
 
         <button type="button" class="start-action-btn" onclick="startQuiz(false)">Orderly Questions</button>
@@ -741,14 +706,19 @@ button:disabled {
     <!-- Detailed Answers Review Screen -->
     <div id="detailedReviewScreen" class="hidden">
         <h2 id="detailedReviewTitle">Detailed Review</h2>
-        <p id="detailedReviewSubtitle" style="text-align: center; color: #c7d2fe; font-size: 0.88rem; margin-bottom: 166px;">Review your answers and detailed notes for each question:</p>
+        <p id="detailedReviewSubtitle" style="text-align: center; color: #c7d2fe; font-size: 0.88rem; margin-bottom: 16px;">Review your answers and detailed notes for each question:</p>
         
-        <!-- Panatilihin ang simpleng select dito para sa review filtering -->
-        <select id="reviewCategoryFilter" class="category-select-box" onchange="renderDetailedReviewCards()">
-            <option value="All">All Categories</option>
-        </select>
+        <!-- Review Category Dropdown -->
+        <div class="custom-dropdown" id="reviewCategoryDropdown">
+            <div class="dropdown-select" onclick="toggleDropdown('reviewCategoryDropdown')">
+                <span id="selectedReviewCategoryText">All Categories</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="dropdown-list" id="reviewCategoryList"></div>
+        </div>
+        <input type="hidden" id="reviewCategoryFilterValue" value="All">
 
-        <div id="detailedReviewContainer" style="max-height: 68vh; overflow-y: auto; padding-right: 6px;"></div>
+        <div id="detailedReviewContainer" style="max-height: 60vh; overflow-y: auto; padding-right: 6px;"></div>
 
         <button type="button" onclick="backToScoreScreen()" style="width: 100%; margin-top: 16px; background: rgba(99, 102, 241, 0.4); border-color: #818cf8;">Back to Results Screen</button>
     </div>
@@ -781,26 +751,38 @@ button:disabled {
         </div>
         
         <div class="setting-group">
-            <label for="fontSizeSelect">Font Size:</label>
-            <select id="fontSizeSelect" class="setting-control" onchange="changeFontSize(this.value)">
-                <option value="85%">Small</option>
-                <option value="100%" selected>Normal</option>
-                <option value="115%">Large</option>
-                <option value="130%">Extra Large</option>
-            </select>
+            <label>Font Size:</label>
+            <div class="custom-dropdown" id="fontSizeDropdown">
+                <div class="dropdown-select" onclick="toggleDropdown('fontSizeDropdown')">
+                    <span id="selectedFontSizeText">Normal</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list">
+                    <div class="dropdown-list-item" onclick="selectFontSize('85%', 'Small', this)"><span>Small</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item selected" onclick="selectFontSize('100%', 'Normal', this)"><span>Normal</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontSize('115%', 'Large', this)"><span>Large</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontSize('130%', 'Extra Large', this)"><span>Extra Large</span><div class="radio-icon"></div></div>
+                </div>
+            </div>
         </div>
 
         <div class="setting-group">
-            <label for="fontFamilySelect">Font Style:</label>
-            <select id="fontFamilySelect" class="setting-control" onchange="changeFontFamily(this.value)">
-                <option value="'Poppins', sans-serif" selected>Poppins</option>
-                <option value="'Inter', sans-serif">Inter</option>
-                <option value="'Roboto', sans-serif">Roboto</option>
-                <option value="'Montserrat', sans-serif">Montserrat</option>
-                <option value="'Open Sans', sans-serif">Open Sans</option>
-                <option value="'Lexend', sans-serif">Lexend</option>
-                <option value="'Courier Prime', monospace">Monospace (Courier)</option>
-            </select>
+            <label>Font Style:</label>
+            <div class="custom-dropdown" id="fontFamilyDropdown">
+                <div class="dropdown-select" onclick="toggleDropdown('fontFamilyDropdown')">
+                    <span id="selectedFontFamilyText">Poppins</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list">
+                    <div class="dropdown-list-item selected" onclick="selectFontFamily('\'Poppins\', sans-serif', 'Poppins', this)"><span>Poppins</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Inter\', sans-serif', 'Inter', this)"><span>Inter</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Roboto\', sans-serif', 'Roboto', this)"><span>Roboto</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Montserrat\', sans-serif', 'Montserrat', this)"><span>Montserrat</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Open Sans\', sans-serif', 'Open Sans', this)"><span>Open Sans</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Lexend\', sans-serif', 'Lexend', this)"><span>Lexend</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Courier Prime\', monospace', 'Monospace (Courier)', this)"><span>Monospace (Courier)</span><div class="radio-icon"></div></div>
+                </div>
+            </div>
         </div>
 
         <div class="setting-group">
@@ -811,12 +793,11 @@ button:disabled {
             </button>
         </div>
 
-        <button type="button" onclick="closeSettingsModal()" style="width: 100%; margin-top: 10px; background: rgba(129, 140, 248, 0.4); border-color: #818cf8;">Close Options</button>
+        <button type="button" onclick="closeSettingsModal()" style="width: 100%; margin-top: 8px; background: rgba(129, 140, 248, 0.4); border-color: #818cf8;">Close Options</button>
     </div>
 </div>
 
 <script>
-
 let questions = [
   {
     type: "note",
@@ -1516,9 +1497,24 @@ let currentFontFamily = "'Poppins', sans-serif";
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-/* --- BINAGO: Populate Custom Dropdown logic --- */
+function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    const isOpen = dropdown.classList.contains("open");
+    
+    document.querySelectorAll(".custom-dropdown").forEach(d => d.classList.remove("open"));
+    
+    if (!isOpen) {
+        dropdown.classList.add("open");
+    }
+}
+
+window.addEventListener('click', function(e) {
+    if (!e.target.closest('.custom-dropdown')) {
+        document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('open'));
+    }
+});
+
 function populateCategories() {
-    // Para sa Custom Dropdown sa Home Screen
     const categoryList = document.getElementById("categoryList");
     const categories = ["All", ...new Set(questions.map(q => q.category).filter(Boolean))];
     
@@ -1526,68 +1522,38 @@ function populateCategories() {
     categories.forEach(cat => {
         let div = document.createElement("div");
         div.className = "dropdown-list-item";
-        if (cat === "All") {
-            div.classList.add("selected"); // Default selection
-        }
-        div.setAttribute("data-value", cat);
+        if (cat === "All") div.classList.add("selected");
         
         let labelText = cat === "All" ? "All Categories" : cat;
-        
-        div.innerHTML = `
-            <span>${labelText}</span>
-            <div class="radio-icon"></div>
-        `;
+        div.innerHTML = `<span>${labelText}</span><div class="radio-icon"></div>`;
         
         div.onclick = function() {
-            selectCategoryItem(cat, labelText, div);
+            document.getElementById("selectedCategoryText").textContent = labelText;
+            document.getElementById("categorySelectValue").value = cat;
+            categoryList.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            toggleDropdown('categoryDropdown');
         };
         
         categoryList.appendChild(div);
     });
-
-    // Panatilihin ang logic para sa simpleng select sa Review Screen
-    const reviewCategorySelect = document.getElementById("reviewCategoryFilter");
-    if (reviewCategorySelect) {
-        reviewCategorySelect.innerHTML = "";
-        categories.forEach(cat => {
-            let opt = document.createElement("option");
-            opt.value = cat;
-            opt.textContent = cat === "All" ? "All Categories" : cat;
-            reviewCategorySelect.appendChild(opt);
-        });
-    }
 }
 
-// Bagong function para sa custom dropdown logic
-function toggleDropdown() {
-    const dropdown = document.getElementById("categoryDropdown");
-    dropdown.classList.toggle("open");
+function selectFontSize(value, label, el) {
+    document.getElementById("selectedFontSizeText").textContent = label;
+    changeFontSize(value);
+    el.parentElement.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+    el.classList.add("selected");
+    toggleDropdown('fontSizeDropdown');
 }
 
-// Bagong function para sa pagpili ng item sa custom dropdown
-function selectCategoryItem(value, text, element) {
-    // Update display text
-    document.getElementById("selectedCategoryText").textContent = text;
-    // Update hidden value
-    document.getElementById("categorySelectValue").value = value;
-    
-    // Update selection styling
-    const items = document.querySelectorAll("#categoryList .dropdown-list-item");
-    items.forEach(item => item.classList.remove("selected"));
-    element.classList.add("selected");
-    
-    // Close dropdown
-    toggleDropdown();
+function selectFontFamily(value, label, el) {
+    document.getElementById("selectedFontFamilyText").textContent = label;
+    changeFontFamily(value);
+    el.parentElement.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+    el.classList.add("selected");
+    toggleDropdown('fontFamilyDropdown');
 }
-
-// Isara ang dropdown kung mag-click sa labas nito
-window.addEventListener('click', function(e) {
-    const dropdown = document.getElementById("categoryDropdown");
-    if (dropdown && !dropdown.contains(e.target)) {
-        dropdown.classList.remove("open");
-    }
-});
-/* ----------------------------------------------- */
 
 populateCategories();
 loadSettings();
@@ -1641,12 +1607,10 @@ function loadSettings() {
         const settings = JSON.parse(saved);
         if (settings.fontSize) {
             currentFontSize = settings.fontSize;
-            document.getElementById("fontSizeSelect").value = currentFontSize;
             document.documentElement.style.setProperty('--base-font-scale', currentFontSize);
         }
         if (settings.fontFamily) {
             currentFontFamily = settings.fontFamily;
-            document.getElementById("fontFamilySelect").value = currentFontFamily;
             document.documentElement.style.setProperty('--app-font', currentFontFamily);
         }
         if (settings.isMuted !== undefined) {
@@ -1727,7 +1691,7 @@ function restartQuiz() {
 
 function toggleBookmark() {
     let q = quizData[currentQuestion];
-    if (q.type === "note") return; // Prevent bookmarking note screens
+    if (q.type === "note") return;
     
     const index = bookmarkedQuestions.findIndex(item => item.question === q.question);
     const btn = document.getElementById("bookmarkBtn");
@@ -1815,7 +1779,6 @@ function shuffle(array){
 
 function startQuiz(randomize){
     clearSavedProgress();
-    // BINAGO: Kumuha ng value mula sa hidden input sa halip na native select
     const selectedCategory = document.getElementById("categorySelectValue").value;
 
     let filteredQuestions = questions;
@@ -2161,8 +2124,7 @@ function showDetailedReview(mode) {
         subtitleEl.textContent = "Review your answers and detailed notes for each question:";
     }
 
-    const filterSelect = document.getElementById("reviewCategoryFilter");
-    
+    const reviewCategoryList = document.getElementById("reviewCategoryList");
     let availableCategories = quizData;
     if (currentReviewMode === 'notes') {
         availableCategories = quizData.filter(q => q.type === "note");
@@ -2170,12 +2132,25 @@ function showDetailedReview(mode) {
     
     const categories = ["All", ...new Set(availableCategories.map(q => q.category).filter(Boolean))];
     
-    filterSelect.innerHTML = "";
+    reviewCategoryList.innerHTML = "";
     categories.forEach(cat => {
-        let opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat === "All" ? "All Categories" : cat;
-        filterSelect.appendChild(opt);
+        let div = document.createElement("div");
+        div.className = "dropdown-list-item";
+        if (cat === "All") div.classList.add("selected");
+        
+        let labelText = cat === "All" ? "All Categories" : cat;
+        div.innerHTML = `<span>${labelText}</span><div class="radio-icon"></div>`;
+        
+        div.onclick = function() {
+            document.getElementById("selectedReviewCategoryText").textContent = labelText;
+            document.getElementById("reviewCategoryFilterValue").value = cat;
+            reviewCategoryList.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            toggleDropdown('reviewCategoryDropdown');
+            renderDetailedReviewCards();
+        };
+        
+        reviewCategoryList.appendChild(div);
     });
 
     renderDetailedReviewCards();
@@ -2185,7 +2160,7 @@ function renderDetailedReviewCards() {
     const container = document.getElementById("detailedReviewContainer");
     container.innerHTML = "";
 
-    const selectedCategory = document.getElementById("reviewCategoryFilter").value;
+    const selectedCategory = document.getElementById("reviewCategoryFilterValue").value;
     let reviewItemCount = 0;
 
     quizData.forEach((q, index) => {
@@ -2279,7 +2254,6 @@ function reviewBookmarkedQuestions(){
     saveProgress();
     loadQuestion();
 }
-
 </script>
 
 </body>
