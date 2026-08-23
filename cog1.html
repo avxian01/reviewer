@@ -1,0 +1,3376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COG P1</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400;600;700&family=Lexend:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Canvas Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+    --base-font-scale: 100%;
+    --app-font: 'Poppins', sans-serif;
+}
+
+html {
+    font-size: var(--base-font-scale);
+}
+
+* {
+    box-sizing: border-box;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+body {
+    font-family: var(--app-font);
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f8fafc;
+}
+
+/* Glassmorphism Container Card */
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding: 32px;
+    }
+}
+
+/* Top Header Bar */
+.top-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Navigation/Icon Buttons */
+.icon-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.modal-content {
+    background: rgba(30, 27, 75, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #c7d2fe;
+    font-weight: 500;
+}
+
+.toggle-switch-btn {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0 16px;
+    border-radius: 12px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Progress Bar Styling */
+.progress-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    height: 8px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #818cf8 0%, #c084fc 100%);
+    border-radius: 10px;
+    transition: width 0.4s ease-in-out;
+    box-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
+}
+
+/* Quiz Header Bar */
+.quiz-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#bookmarkBtn.bookmarked {
+    background: rgba(245, 158, 11, 0.3);
+    border-color: #f59e0b;
+}
+
+/* Streak Counter Styling */
+.streak-badge {
+    background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+h2 {
+    margin-top: 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    text-align: center;
+}
+
+h3#questionNumber {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #818cf8;
+    margin: 0;
+}
+
+h2#questionText {
+    font-size: 1.15rem;
+    text-align: left;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Action Buttons */
+button {
+    font-family: inherit;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.88rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+button:disabled {
+    cursor: default;
+    opacity: 0.9;
+}
+
+/* Option Items */
+.answer {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.answer:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(129, 140, 248, 0.5);
+}
+
+/* Highlight Colors */
+.correct {
+    background: rgba(59, 130, 246, 0.35) !important;
+    border-color: #60a5fa !important;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
+}
+
+.correct-answer {
+    background: rgba(34, 197, 94, 0.35) !important;
+    border-color: #4ade80 !important;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+.wrong {
+    background: rgba(239, 68, 68, 0.35) !important;
+    border-color: #f87171 !important;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#notesBox {
+    margin-top: 20px;
+    padding: 18px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    border-left: 4px solid #818cf8;
+    line-height: 1.6;
+    white-space: pre-line;
+    font-size: 0.95rem;
+}
+
+/* Pure Note Card Styles */
+.pure-note-card {
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-left: 4px solid #38bdf8;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.pure-note-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.pure-note-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #f8fafc;
+    white-space: pre-line;
+}
+
+#startScreen {
+    text-align: center;
+}
+
+.start-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* --- CUSTOM UI DROPDOWN COMPONENT --- */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 12px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.dropdown-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dropdown-select:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.dropdown-select .arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.custom-dropdown.open .dropdown-select .arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background: #1e1b4b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+.dropdown-list::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.custom-dropdown.open .dropdown-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    color: #ffffff;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-list-item:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.dropdown-list-item:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.dropdown-list-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.dropdown-list-item.selected {
+    background: rgba(99, 102, 241, 0.25);
+    color: #818cf8;
+    font-weight: 600;
+}
+
+.dropdown-list-item .radio-icon {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    position: relative;
+}
+
+.dropdown-list-item.selected .radio-icon {
+    border-color: #818cf8;
+}
+
+.dropdown-list-item.selected .radio-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: #818cf8;
+    border-radius: 50%;
+}
+
+#startScreen button.start-action-btn {
+    width: 100%;
+    margin: 6px 0;
+    padding: 14px;
+    font-size: 0.95rem;
+    background: rgba(99, 102, 241, 0.3);
+    border-color: rgba(129, 140, 248, 0.4);
+}
+
+#startScreen button.start-action-btn:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+#resumeBtn {
+    background: rgba(34, 197, 94, 0.3) !important;
+    border-color: #4ade80 !important;
+    font-weight: 600;
+}
+
+#scoreScreen {
+    text-align: center;
+}
+
+#scoreScreen button {
+    width: 100%;
+    margin: 6px 0;
+    padding: 12px;
+}
+
+.analytics-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 18px 0;
+    text-align: left;
+}
+
+.analytics-card h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    color: #818cf8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.analytics-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+.review-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.review-q-text {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    color: #ffffff;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.review-ans-row {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.review-notes {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid #818cf8;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+.navigation-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.action-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+}
+
+#nextBtn {
+    background: rgba(99, 102, 241, 0.4);
+    border-color: #818cf8;
+}
+
+#nextBtn:hover {
+    background: rgba(99, 102, 241, 0.6);
+}
+
+.watermark {
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 20px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    user-select: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Start Screen / Quiz Mode Panel -->
+    <div id="startScreen">
+        <div class="start-header">
+            <div style="width: 38px;"></div>
+            <h2 style="font-size: 1.8rem; margin: 0;">Quiz Mode</h2>
+            <button type="button" class="icon-btn" onclick="openSettingsModal()" title="Options / Settings">⚙️</button>
+        </div>
+
+        <button type="button" id="resumeBtn" class="start-action-btn hidden" onclick="resumeQuiz()">▶ Resume Progress</button>
+
+        <!-- Category Dropdown -->
+        <div class="custom-dropdown" id="categoryDropdown">
+            <div class="dropdown-select" onclick="toggleDropdown('categoryDropdown')">
+                <span id="selectedCategoryText">All Categories</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="dropdown-list" id="categoryList"></div>
+        </div>
+        <input type="hidden" id="categorySelectValue" value="All">
+
+        <button type="button" class="start-action-btn" onclick="startQuiz(false)">Orderly Questions</button>
+        <button type="button" class="start-action-btn" onclick="startQuiz(true)">Randomized Questions & Answers</button>
+
+        <div class="watermark">@avxianx</div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quizScreen" class="hidden">
+        <div class="top-nav-bar">
+            <button type="button" class="icon-btn" onclick="goHome()" title="Home">
+                <span>🏠</span>
+                <span>Home</span>
+            </button>
+            <span id="streakBadge" class="streak-badge hidden">🔥 0 in a row!</span>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="quiz-header-bar">
+            <div class="header-left">
+                <h3 id="questionNumber"></h3>
+                <button type="button" id="bookmarkBtn" class="icon-btn" onclick="toggleBookmark()" title="Bookmark Question">📍</button>
+            </div>
+        </div>
+
+        <div id="quizContentArea">
+            <h2 id="questionText"></h2>
+            <div id="answers"></div>
+        </div>
+
+        <div class="navigation-btns">
+            <button type="button" id="prevBtn" class="hidden" onclick="prevQuestion()">◄ Back</button>
+            <div class="action-btns">
+                <button type="button" id="notesBtn" class="hidden">Notes</button>
+                <button type="button" id="nextBtn" class="hidden">Next Question ►</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Screen -->
+    <div id="notesScreen" class="hidden">
+        <h2>Notes & Explanation</h2>
+        <div id="notesBox"></div>
+        <br>
+        <button type="button" onclick="backToQuestion()">Back to Quiz</button>
+    </div>
+
+    <!-- Detailed Answers Review Screen -->
+    <div id="detailedReviewScreen" class="hidden">
+        <h2 id="detailedReviewTitle">Detailed Review</h2>
+        <p id="detailedReviewSubtitle" style="text-align: center; color: #c7d2fe; font-size: 0.88rem; margin-bottom: 16px;">Review your answers and detailed notes for each question:</p>
+        
+        <!-- Review Category Dropdown -->
+        <div class="custom-dropdown" id="reviewCategoryDropdown">
+            <div class="dropdown-select" onclick="toggleDropdown('reviewCategoryDropdown')">
+                <span id="selectedReviewCategoryText">All Categories</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="dropdown-list" id="reviewCategoryList"></div>
+        </div>
+        <input type="hidden" id="reviewCategoryFilterValue" value="All">
+
+        <div id="detailedReviewContainer" style="max-height: 60vh; overflow-y: auto; padding-right: 6px;"></div>
+
+        <button type="button" onclick="backToScoreScreen()" style="width: 100%; margin-top: 16px; background: rgba(99, 102, 241, 0.4); border-color: #818cf8;">Back to Results Screen</button>
+    </div>
+
+    <!-- Score / Results Screen -->
+    <div id="scoreScreen" class="hidden">
+        <h2 id="scoreHeaderTitle">Quiz Finished!</h2>
+        <h3 id="scoreText" style="font-size: 1.5rem; color: #818cf8; margin: 15px 0;"></h3>
+
+        <div id="analyticsCard" class="analytics-card">
+            <h4>Performance Breakdown</h4>
+            <div id="analyticsList"></div>
+        </div>
+
+        <button type="button" id="reviewAllAnswersBtn" onclick="showDetailedReview('answers')" style="background: rgba(99, 102, 241, 0.35); border-color: #818cf8; font-weight: 600;">Review All Answers</button>
+        <button type="button" id="reviewAllNotesBtn" onclick="showDetailedReview('notes')" style="background: rgba(14, 165, 233, 0.35); border-color: #38bdf8; font-weight: 600;">Review All Notes</button>
+        <button type="button" id="retakeAllBtn" onclick="restartQuiz()">Retake All Questions</button>
+        <button type="button" id="retakeWrongBtn" class="hidden" onclick="retakeWrongQuestions()">Retake Wrong Only</button>
+        <button type="button" id="reviewBookmarkedBtn" class="hidden" onclick="reviewBookmarkedQuestions()">Review Bookmarked</button>
+        <button type="button" onclick="goHome()" style="background: rgba(255, 255, 255, 0.08); margin-top: 10px;">🏠 Back to Home</button>
+    </div>
+
+</div>
+
+<!-- Options / Settings Modal -->
+<div id="settingsModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>⚙️ Quiz Options</h3>
+        </div>
+        
+        <div class="setting-group">
+            <label>Font Size:</label>
+            <div class="custom-dropdown" id="fontSizeDropdown">
+                <div class="dropdown-select" onclick="toggleDropdown('fontSizeDropdown')">
+                    <span id="selectedFontSizeText">Normal</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list">
+                    <div class="dropdown-list-item" onclick="selectFontSize('85%', 'Small', this)"><span>Small</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item selected" onclick="selectFontSize('100%', 'Normal', this)"><span>Normal</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontSize('115%', 'Large', this)"><span>Large</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontSize('130%', 'Extra Large', this)"><span>Extra Large</span><div class="radio-icon"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <label>Font Style:</label>
+            <div class="custom-dropdown" id="fontFamilyDropdown">
+                <div class="dropdown-select" onclick="toggleDropdown('fontFamilyDropdown')">
+                    <span id="selectedFontFamilyText">Poppins</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list">
+                    <div class="dropdown-list-item selected" onclick="selectFontFamily('\'Poppins\', sans-serif', 'Poppins', this)"><span>Poppins</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Inter\', sans-serif', 'Inter', this)"><span>Inter</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Roboto\', sans-serif', 'Roboto', this)"><span>Roboto</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Montserrat\', sans-serif', 'Montserrat', this)"><span>Montserrat</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Open Sans\', sans-serif', 'Open Sans', this)"><span>Open Sans</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Lexend\', sans-serif', 'Lexend', this)"><span>Lexend</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Courier Prime\', monospace', 'Monospace (Courier)', this)"><span>Monospace (Courier)</span><div class="radio-icon"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <label>Sound Effects:</label>
+            <button type="button" id="soundToggleModalBtn" class="toggle-switch-btn" onclick="toggleSound()">
+                <span>Sound Effects</span>
+                <span id="soundStatusText">ON 🔊</span>
+            </button>
+        </div>
+
+        <button type="button" onclick="closeSettingsModal()" style="width: 100%; margin-top: 8px; background: rgba(129, 140, 248, 0.4); border-color: #818cf8;">Close Options</button>
+    </div>
+</div>
+
+<script>
+let questions = [
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which term refers to the process of developing ideas through debate and contrasting views?",
+        answers: [
+            "Dialectic",
+            "Synthesis",
+            "Introspection",
+            "Empiricism"
+        ],
+        correct: "Dialectic",
+        notes: "Dialectic (Evolution of ideas process): The process of developing ideas through debate and contrasting views.\n\n• Explanation: This is the process of how ideas evolve through dialogue and contrasting perspectives.\n• Example: Someone says 'It's better to commute' (Thesis), another responds 'It's faster to have your own car' (Antithesis), until they agree 'Commute during rush hour, but drive at night' (Synthesis)."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What is defined as the original statement, theory, or belief before being countered?",
+        answers: [
+            "Antithesis",
+            "Thesis",
+            "Synthesis",
+            "Pragmatism"
+        ],
+        correct: "Thesis",
+        notes: "Thesis (Initial statement of belief): The original statement, theory, or belief.\n\n• Explanation: The initial belief or statement before being contradicted by others.\n• Example: 'All humans are naturally good at first.'"
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which concept represents a statement that directly opposes or contradicts the initial belief?",
+        answers: [
+            "Synthesis",
+            "Thesis",
+            "Antithesis",
+            "Contiguity"
+        ],
+        correct: "Antithesis",
+        notes: "Antithesis (Statement countering original belief): A statement that directly opposes or contradicts the initial belief.\n\n• Explanation: The argument that counters the first statement.\n• Example: 'That's not true, some people are inherently selfish right away.'"
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What process involves combining the best parts of both the thesis and antithesis to form a new, better idea?",
+        answers: [
+            "Associationism",
+            "Functionalism",
+            "Introspection",
+            "Synthesis"
+        ],
+        correct: "Synthesis",
+        notes: "Synthesis (Integration of credible viewpoints): Combining the best parts of both the thesis and antithesis to form a new, better idea.\n\n• Explanation: Combining the good points from two opposing ideas.\n• Example: 'Humans have inherent goodness, but it also depends on the environment how they grow up.'"
+    },
+    {
+        type: "note",
+        category: "MODULE 1",
+        question: "Concept Overview: The Dialectic Process Framework",
+        notes: "The Dialectic Process (Evolution of Ideas):\n\n1. Thesis: Initial statement, theory, or belief.\n2. Antithesis: Statement countering or directly opposing the original belief.\n3. Synthesis: Integration of credible viewpoints combining the best parts of both to form a new, better idea."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which field involves exploring big questions about knowledge and existence through inner introspection and logical reasoning?",
+        answers: [
+            "Philosophy",
+            "Physiology",
+            "Cognitivism",
+            "Behaviorism"
+        ],
+        correct: "Philosophy",
+        notes: "Philosophy (Examination through inner introspection): Exploring big questions about knowledge and existence through deep thinking and logical reasoning.\n\n• Explanation: Understanding life and thought using deep logic and self-reflection.\n• Example: Asking oneself 'What is my real purpose in life?'"
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which discipline is defined as the scientific empirical study of how living organisms and their body parts function?",
+        answers: [
+            "Associationism",
+            "Physiology",
+            "Structuralism",
+            "Philosophy"
+        ],
+        correct: "Physiology",
+        notes: "Physiology (Scientific empirical life study): The scientific study of how living organisms and their body parts function.\n\n• Explanation: The scientific study of how the human body and organs operate.\n• Example: Studying how the brain sends signals to the hand when touching something hot."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which philosopher promoted rationalism and introspection, arguing that reason and logic are the primary paths to truth?",
+        answers: [
+            "John Locke",
+            "Wilhelm Wundt",
+            "René Descartes",
+            "William James"
+        ],
+        correct: "René Descartes",
+        notes: "René Descartes: Promoted rationalism and introspection. A philosopher who believed that reason, logic, and self-reflection are the primary paths to truth.\n\n• Explanation: He believed we can acquire truth through logic and thinking, not just bodily senses."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which philosophical belief holds that knowledge comes from logical reasoning rather than sensory experience?",
+        answers: [
+            "Rationalism",
+            "Empiricism",
+            "Pragmatism",
+            "Behaviorism"
+        ],
+        correct: "Rationalism",
+        notes: "Rationalism (Knowledge through logical reasoning): The belief that knowledge comes from logical reasoning rather than sensory experience.\n\n• Explanation: The belief that knowledge is gained through mind and logic, not just sight or hearing.\n• Example: You know 2+2=4 even without counting four real apples."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What method involves looking inward at pieces to examine one's own conscious thoughts and feelings?",
+        answers: [
+            "Empiricism",
+            "Introspection",
+            "Naturalistic Observation",
+            "Case Study"
+        ],
+        correct: "Introspection",
+        notes: "Introspection (Looking inward at pieces): Examining your own conscious thoughts and feelings.\n\n• Explanation: Looking into your own feelings and emotions to understand why you think that way.\n• Example: Asking oneself 'Why do I feel annoyed right now even if my companion isn't doing anything wrong?'"
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which principle formulated by René Descartes states that the act of thinking proves one's existence (\"I think, therefore I am\")?",
+        answers: [
+            "Tabula Rasa",
+            "Law of Effect",
+            "Cogito, Ergo Sum",
+            "Prägnanz"
+        ],
+        correct: "Cogito, Ergo Sum",
+        notes: "Cogito, Ergo Sum (\"I think, therefore I am\"): Descartes' famous principle stating that the act of thinking proves one's existence.\n\n• Explanation: 'I think, therefore I exist.' The act of doubting or thinking itself is proof that you are alive and real."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which philosopher promoted empiricism and observation, arguing that knowledge comes strictly from sensory experience?",
+        answers: [
+            "John Locke",
+            "René Descartes",
+            "John Dewey",
+            "Ulric Neisser"
+        ],
+        correct: "John Locke",
+        notes: "John Locke: Promoted empiricism and observation. A philosopher who argued that knowledge comes strictly from sensory experience and direct observation.\n\n• Explanation: He believed that humans learn solely through actual experience and direct visual observation."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What view states that knowledge originates in direct experience and empirical sensory evidence?",
+        answers: [
+            "Rationalism",
+            "Pragmatism",
+            "Empiricism",
+            "Associationism"
+        ],
+        correct: "Empiricism",
+        notes: "Empiricism (Knowledge through direct observation): The view that knowledge originates in experience and sensory evidence.\n\n• Explanation: Knowledge gained directly from experience, observation, and experimentation.\n• Example: You know fire is hot because you've experienced getting burned before."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which concept by John Locke describes the human mind as a blank slate shaped entirely by experience?",
+        answers: [
+            "Tabula Rasa",
+            "Dialectic",
+            "Cogito, Ergo Sum",
+            "Metacognition"
+        ],
+        correct: "Tabula Rasa",
+        notes: "Tabula Rasa (Mind is a blank slate): Locke's concept that human minds are born blank and shaped entirely by experience.\n\n• Explanation: Humans are born like a blank piece of paper—knowing nothing, and experience writes upon it.\n• Example: A baby has no fear of snakes until learning that they can bite."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who is known as the father of psychology and pioneered structural introspection to study the mind?",
+        answers: [
+            "William James",
+            "Wilhelm Wundt",
+            "Edward Thorndike",
+            "John B. Watson"
+        ],
+        correct: "Wilhelm Wundt",
+        notes: "Wilhelm Wundt: Pioneer of structural introspection. Known as the father of psychology, he used introspection to study the basic structure of the mind.\n\n• Explanation: Father of Psychology; tried to dissect the mind into its smallest components using self-observation."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which early school of psychology sought to analyze the mind by breaking down mental processes into their most basic structural elements?",
+        answers: [
+            "Functionalism",
+            "Behaviorism",
+            "Structuralism",
+            "Gestalt Psychology"
+        ],
+        correct: "Structuralism",
+        notes: "Structuralism (Analyzing mind's structural elements): Early school of psychology that sought to break down mental processes into their most basic components.\n\n• Explanation: Studying the mind like Lego blocks—breaking down experience into small sensations.\n• Example: When eating an apple, separating its sweetness, red color, and crunchiness."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which key functionalist leader focused on how mental operations help people adapt to their environments?",
+        answers: [
+            "William James",
+            "B. F. Skinner",
+            "Hermann Ebbinghaus",
+            "Noam Chomsky"
+        ],
+        correct: "William James",
+        notes: "William James: Key functionalist psychology leader. Pioneer who focused on how mental operations help people adapt to their environments.\n\n• Explanation: Studied how the human mind helps individuals survive and adapt daily."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which school of psychology considers behavior and mental life in terms of active adaptation to the environment?",
+        answers: [
+            "Structuralism",
+            "Functionalism",
+            "Cognitivism",
+            "Associationism"
+        ],
+        correct: "Functionalism",
+        notes: "Functionalism (Focusing on how the mind processes): School of psychology that considers behavior and mental life in terms of active adaptation.\n\n• Explanation: Focusing on 'how it works' and 'what it's for', rather than 'what parts make it up'.\n• Example: Understanding why we feel fear—because it helps us avoid danger."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which ideology states that the truth of an idea is measured by its practical success and usefulness?",
+        answers: [
+            "Rationalism",
+            "Pragmatism",
+            "Empiricism",
+            "Behaviorism"
+        ],
+        correct: "Pragmatism",
+        notes: "Pragmatism (Knowledge validated by usefulness): Ideology stating that the truth of an idea is measured by its practical success and usefulness.\n\n• Explanation: An idea only has value if it is useful in real life.\n• Example: A study strategy that helps you pass an exam is more valuable than mere theory."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which pragmatist educational psychology pioneer advocated for \"learning by doing\"?",
+        answers: [
+            "John Dewey",
+            "Edward Thorndike",
+            "Albert Bandura",
+            "Alan Turing"
+        ],
+        correct: "John Dewey",
+        notes: "John Dewey: Pragmatist educational psychology pioneer. Applied pragmatism to education, advocating for 'learning by doing'.\n\n• Explanation: Promoted learning through hands-on activity rather than pure memorization."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which theory proposes that mental elements and ideas are linked together based on experience?",
+        answers: [
+            "Associationism",
+            "Structuralism",
+            "Functionalism",
+            "Behaviorism"
+        ],
+        correct: "Associationism",
+        notes: "Associationism (Linking mental elements together): Theory that ideas are connected to each other based on experience.\n\n• Explanation: Connecting two different things or ideas in your mind.\n• Example: When you see lightning, you automatically think thunder will follow."
+    },
+    {
+        type: "note",
+        category: "MODULE 1",
+        question: "Principles of Associationism Breakdown",
+        notes: "3 Principles of Associationism:\n\n1. Contiguity (Occurring close in time/space): Associating things because they happen together in time or space.\n• Example: Thinking of popcorn right away when seeing a cinema.\n\n2. Similarity (Sharing similar physical features): Associating items that look or feel like each other.\n• Example: Remembering a pet rabbit when seeing a cat because both are furry.\n\n3. Contrast (Showing polar opposite characteristics): Associating things because they are complete opposites.\n• Example: Thinking of cold ice during extremely hot weather."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which principle of association refers to linking items because they occur close together in time or space?",
+        answers: [
+            "Similarity",
+            "Contrast",
+            "Contiguity",
+            "Prägnanz"
+        ],
+        correct: "Contiguity",
+        notes: "Contiguity (Occurring close in time): Associating things because they happen together in time or space.\n\n• Explanation: Connecting two things because they happen at the same time or sequentially.\n• Example: Thinking of popcorn right away when seeing a cinema."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which principle of association involves linking items that share similar physical features?",
+        answers: [
+            "Similarity",
+            "Contiguity",
+            "Contrast",
+            "Synthesis"
+        ],
+        correct: "Similarity",
+        notes: "Similarity (Sharing similar physical features): Associating items that look or feel like each other.\n\n• Explanation: Linking two things because they look alike.\n• Example: When seeing a cat, remembering a pet rabbit because both have fur."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which principle of association refers to associating things because they display polar opposite characteristics?",
+        answers: [
+            "Contiguity",
+            "Contrast",
+            "Similarity",
+            "Dialectic"
+        ],
+        correct: "Contrast",
+        notes: "Contrast (Showing polar opposite characteristics): Associating things because they are complete opposites.\n\n• Explanation: Connecting two things due to their opposite traits.\n• Example: Thinking of cold ice when the weather is extremely hot."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which psychologist systematically studied memory and discovered how repetition affects forgetting?",
+        answers: [
+            "Karl Lashley",
+            "Hermann Ebbinghaus",
+            "Donald Hebb",
+            "George Miller"
+        ],
+        correct: "Hermann Ebbinghaus",
+        notes: "Hermann Ebbinghaus: Studied repetition in learning. Psychologist who systematically studied memory and how repetition affects forgetting.\n\n• Explanation: Proved that the more frequently you repeat a lesson, the longer you will retain it (Forgetting Curve)."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who formulated the Law of Effect, proposing that behaviors followed by satisfying outcomes are likely to be repeated?",
+        answers: [
+            "Ivan Pavlov",
+            "Edward Thorndike",
+            "B. F. Skinner",
+            "John B. Watson"
+        ],
+        correct: "Edward Thorndike",
+        notes: "Edward Thorndike: Formulated Law of Effect. Proposed that behaviors followed by satisfying outcomes are likely to be repeated.\n\n• Explanation: When an action produces a good reward, you repeat it; when punished, you stop.\n• Example: Studying hard because you are rewarded with an allowance for high grades."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which psychological approach focuses strictly on observable physical behavior while ignoring internal mental processes?",
+        answers: [
+            "Cognitivism",
+            "Behaviorism",
+            "Structuralism",
+            "Gestalt Psychology"
+        ],
+        correct: "Behaviorism",
+        notes: "Behaviorism (Studying observable physical behavior): Approach focusing strictly on observable and measurable actions, ignoring internal mental processes.\n\n• Explanation: Psychology focused strictly on visible human actions, not thoughts.\n• Example: Measuring how many times a person claps instead of asking if they are happy."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who discovered the principles of classical conditioning by showing that involuntary responses can be conditioned using paired stimuli?",
+        answers: [
+            "Ivan Pavlov",
+            "B. F. Skinner",
+            "Albert Bandura",
+            "Edward Tolman"
+        ],
+        correct: "Ivan Pavlov",
+        notes: "Ivan Pavlov: Discovered classical conditioning principles. Showed that involuntary responses can be conditioned using paired stimuli.\n\n• Explanation: Discovered that the body can be trained to react automatically to a signal.\n• Example: A dog salivates upon hearing a bell because it was conditioned to expect food afterward."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who is recognized as the father of the behaviorism movement, arguing that psychology should study only outer behavior?",
+        answers: [
+            "John B. Watson",
+            "Wilhelm Wundt",
+            "William James",
+            "Jerry Fodor"
+        ],
+        correct: "John B. Watson",
+        notes: "John B. Watson: Father of behaviorism movement. Championed behaviorism, arguing psychology should only study outer behavior.\n\n• Explanation: Argued that psychology must be based purely on what can be visually observed."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which psychologist discovered operant conditioning principles, demonstrating how behavior is shaped by rewards and punishments?",
+        answers: [
+            "B. F. Skinner",
+            "Ivan Pavlov",
+            "Edward Thorndike",
+            "John B. Watson"
+        ],
+        correct: "B. F. Skinner",
+        notes: "B. F. Skinner: Discovered operant conditioning principles. Developed theory showing behavior is shaped by rewards and punishments.\n\n• Explanation: Studied behavior modification through rewards and punishments.\n• Example: Submitting a project on time to avoid grade deductions."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who demonstrated goal-directed behavior and cognitive maps, proving that learning can occur internally without immediate rewards?",
+        answers: [
+            "Edward Tolman",
+            "Albert Bandura",
+            "Karl Lashley",
+            "Donald Hebb"
+        ],
+        correct: "Edward Tolman",
+        notes: "Edward Tolman: Studied goal-directed behavior. Showed that learning can happen internally without immediate behavioral rewards (cognitive maps).\n\n• Explanation: Proved that even without a reward, the brain builds internal knowledge or 'mental maps'.\n• Example: Memorizing directions in a mall even when you aren't buying anything."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who created Social Learning Theory, proposing that people learn behaviors by observing and imitating others?",
+        answers: [
+            "Albert Bandura",
+            "John Dewey",
+            "Ulric Neisser",
+            "Noam Chomsky"
+        ],
+        correct: "Albert Bandura",
+        notes: "Albert Bandura: Social learning theory creator. Proposed that people learn behaviors by observing and imitating others.\n\n• Explanation: People learn by observing and mimicking the actions of others.\n• Example: A child copying the speech or behavior of their parents."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which psychological perspective is built on the principle that \"the whole exceeds the sum of its parts\"?",
+        answers: [
+            "Gestalt Psychology",
+            "Structuralism",
+            "Associationism",
+            "Functionalism"
+        ],
+        correct: "Gestalt Psychology",
+        notes: "Gestalt Psychology (\"Whole exceeds sum of parts\"): Psychological view that the human mind perceives whole patterns rather than just individual components.\n\n• Explanation: The brain processes overall patterns faster than individual details.\n• Example: A song consists of separate notes, but we perceive it as a single complete melody."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which movement focuses specifically on how people think, remember, process, and store internal information?",
+        answers: [
+            "Cognitivism",
+            "Behaviorism",
+            "Empiricism",
+            "Pragmatism"
+        ],
+        correct: "Cognitivism",
+        notes: "Cognitivism (Studying internal mental processes): Study focusing on how people think, remember, process, and store information.\n\n• Explanation: Studying how the brain thinks, processes, and stores information.\n• Example: Understanding the steps involved in solving a mathematical problem."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which researcher demonstrated that brain functions are distributed across networks rather than isolated spots?",
+        answers: [
+            "Donald Hebb",
+            "Karl Lashley",
+            "Alan Turing",
+            "Jerry Fodor"
+        ],
+        correct: "Karl Lashley",
+        notes: "Karl Lashley: Brain actively organizes behavior. Showed that brain functions are distributed across networks rather than isolated spots.\n\n• Explanation: Showed that the brain works as an integrated network to manage behavior."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who proposed cell assembly connections and formulated that \"neurons that fire together, wire together\"?",
+        answers: [
+            "Donald Hebb",
+            "Karl Lashley",
+            "George Miller",
+            "Phineas Gage"
+        ],
+        correct: "Donald Hebb",
+        notes: "Donald Hebb: Proposed cell assembly connections. Formulated that neurons that fire together, wire together.\n\n• Explanation: When brain cells activate together frequently, their connection strengthens."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which linguist argued that human beings are born with an innate, biological capacity for language acquisition?",
+        answers: [
+            "Noam Chomsky",
+            "Ulric Neisser",
+            "Jerry Fodor",
+            "Alan Turing"
+        ],
+        correct: "Noam Chomsky",
+        notes: "Noam Chomsky: Proved language is biological. Argued that humans are born with an innate capacity for language acquisition.\n\n• Explanation: Stated that humans are born with an inherent biological ability to learn language."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who is known as the father of modern computer science and devised a test to evaluate if a machine can think like a human?",
+        answers: [
+            "George Miller",
+            "Alan Turing",
+            "John Dewey",
+            "René Descartes"
+        ],
+        correct: "Alan Turing",
+        notes: "Alan Turing: Created Turing machine test. Father of modern computer science who devised a test to determine if a machine can think like a human.\n\n• Explanation: Developed a test to evaluate whether a computer can simulate human thinking."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who discovered that short-term memory capacity is limited to approximately 7 ± 2 items at once?",
+        answers: [
+            "George Miller",
+            "Hermann Ebbinghaus",
+            "Ulric Neisser",
+            "Donald Hebb"
+        ],
+        correct: "George Miller",
+        notes: "George Miller: Short-term memory capacity. Discovered that short-term memory can hold around 7 ± 2 items at once.\n\n• Explanation: Proved that human short-term memory can hold around 5 to 9 items simultaneously."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Who is considered the father of cognitive psychology after writing the landmark book \"Cognitive Psychology\" in 1967?",
+        answers: [
+            "Ulric Neisser",
+            "William James",
+            "Wilhelm Wundt",
+            "Jerry Fodor"
+        ],
+        correct: "Ulric Neisser",
+        notes: "Ulric Neisser: Wrote Cognitive Psychology 1967. Considered the father of cognitive psychology who formally defined the field.\n\n• Explanation: Established modern Cognitive Psychology through his famous textbook."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which theorist proposed the modularity of mind, stating that the brain is composed of distinct, specialized module systems?",
+        answers: [
+            "Karl Lashley",
+            "Noam Chomsky",
+            "Jerry Fodor",
+            "Albert Bandura"
+        ],
+        correct: "Jerry Fodor",
+        notes: "Jerry Fodor: Modularity of mind. Proposed that the mind is made up of distinct, specialized module systems.\n\n• Explanation: The belief that the brain consists of specialized 'modules' for different tasks (e.g., language or face recognition)."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which famous historic case study demonstrated that damage to the frontal lobe dramatically alters personality?",
+        answers: [
+            "Phineas Gage",
+            "Alan Turing",
+            "Ivan Pavlov",
+            "Albert Bandura"
+        ],
+        correct: "Phineas Gage",
+        notes: "Phineas Gage: Survived iron rod through brain. Famous case study showing how damage to specific brain regions (frontal lobe) dramatically changes personality.\n\n• Explanation: A man who survived an iron rod piercing his brain, proving that brain regions control personality."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What term refers to the mental action or internal human process of acquiring knowledge and understanding?",
+        answers: [
+            "Cognition",
+            "Intelligence",
+            "Metacognition",
+            "Physiology"
+        ],
+        correct: "Cognition",
+        notes: "Cognition (Internal human thinking processes): The mental action or process of acquiring knowledge and understanding.\n\n• Explanation: All internal thinking processes such as memory, comprehension, and decision-making."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which construct is defined as the capacity to acquire knowledge, think logically, and adapt effectively to environmental changes?",
+        answers: [
+            "Metacognition",
+            "Intelligence",
+            "Dialectic",
+            "Pragmatism"
+        ],
+        correct: "Intelligence",
+        notes: "Intelligence (Ability to learn and adapt): The capacity to acquire knowledge, think logically, and adapt effectively to environmental changes.\n\n• Explanation: The ability to learn, comprehend, and quickly adapt to new situations.\n• Example: Finding an alternative route when caught in traffic."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What concept is best described as \"thinking about one's thinking\" or awareness of one's own thought processes?",
+        answers: [
+            "Cognition",
+            "Cultural Intelligence",
+            "Metacognition",
+            "Introspection"
+        ],
+        correct: "Metacognition",
+        notes: "Metacognition (\"Thinking about one's thinking\"): Awareness and understanding of your own thought processes.\n\n• Explanation: Being conscious and aware of your own thinking and learning strategies.\n• Example: Recognizing 'I remember lessons better when I write them down rather than just reading.'"
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which capability allows an individual to function, adjust, and work effectively across culturally diverse situations?",
+        answers: [
+            "Cultural Intelligence (CQ)",
+            "Metacognition",
+            "General Cognition",
+            "Empiricism"
+        ],
+        correct: "Cultural Intelligence (CQ)",
+        notes: "Cultural Intelligence / CQ (Functioning across different cultures): The capability to adjust and work effectively in culturally diverse situations.\n\n• Explanation: The ability to interact and work effectively with people from different cultural backgrounds.\n• Example: Understanding and respecting proper etiquette when working abroad."
+    },
+    {
+        type: "note",
+        category: "MODULE 1",
+        question: "Summary: 4 Primary Research Goals in Cognitive Psychology",
+        notes: "4 Primary Goals of Cognitive Research:\n\n1. Describe Cognition: Goal of identifying what mental processes are taking place.\n2. Explain Cognition: Goal of discovering why and how these mental processes operate.\n3. Predict Behavior: Goal of using cognitive models to estimate future performance.\n4. Apply Findings: Creating real-world practical solutions to fix real-world challenges."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which cognitive research goal focuses on identifying what mental processes are currently taking place?",
+        answers: [
+            "Explain Cognition",
+            "Describe Cognition",
+            "Predict Behavior",
+            "Apply Findings"
+        ],
+        correct: "Describe Cognition",
+        notes: "Describe Cognition (Mapping mental process functions): Goal of identifying what mental processes are taking place.\n\n• Explanation: Describing exactly what occurs in the mind during a specific task.\n• Example: Recording the mental steps a person takes while reading a book."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which research goal in cognitive psychology focuses on discovering why and how specific mental processes operate?",
+        answers: [
+            "Describe Cognition",
+            "Predict Behavior",
+            "Explain Cognition",
+            "Apply Findings"
+        ],
+        correct: "Explain Cognition",
+        notes: "Explain Cognition (Identifying mental causal mechanisms): Goal of discovering why and how these mental processes operate.\n\n• Explanation: Explaining the causes and reasons behind specific thought processes."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which research goal involves using cognitive models to forecast future mental performance and human outcomes?",
+        answers: [
+            "Predict Behavior",
+            "Describe Cognition",
+            "Explain Cognition",
+            "Apply Findings"
+        ],
+        correct: "Predict Behavior",
+        notes: "Predict Behavior (Forecasting future mental performance): Goal of using cognitive models to estimate future outcomes.\n\n• Explanation: Predicting how a person will act or respond based on past patterns.\n• Example: Predicting that a driver will make more errors on the road when sleep-deprived."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which goal involves using research insights to create practical solutions for real-world challenges?",
+        answers: [
+            "Predict Behavior",
+            "Apply Findings",
+            "Describe Cognition",
+            "Explain Cognition"
+        ],
+        correct: "Apply Findings",
+        notes: "Apply Findings (Creating real-world practical solutions): Using research insights to fix practical real-world challenges.\n\n• Explanation: Utilizing research findings to help solve real-life problems.\n• Example: Designing educational software based on how children learn best."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which controlled research method is specifically designed to establish direct cause-and-effect relationships?",
+        answers: [
+            "Correlational Research",
+            "Case Study",
+            "Laboratory Experiments",
+            "Naturalistic Observation"
+        ],
+        correct: "Laboratory Experiments",
+        notes: "Laboratory Experiments (Establishing direct cause and effect): Conducting controlled research testing cause-and-effect relationships.\n\n• Explanation: Testing in a controlled environment to establish direct cause-and-effect variables."
+    },
+    {
+        type: "note",
+        category: "MODULE 1",
+        question: "Experimental Variables Quick Guide",
+        notes: "Types of Variables in Experiments:\n\n• Independent Variable (IV): The factor deliberately changed/manipulated by the experimenter (e.g., amount of sleep).\n• Dependent Variable (DV): The outcome or response being measured (e.g., test score).\n• Control Variable: Factors kept identical across all groups to ensure fairness.\n• Confounding Variable: Uncontrolled outside variables that might corrupt or bias test results."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "In an experiment, what is the factor that is deliberately manipulated or changed by the researcher?",
+        answers: [
+            "Dependent Variable",
+            "Independent Variable",
+            "Control Variable",
+            "Confounding Variable"
+        ],
+        correct: "Independent Variable",
+        notes: "Independent Variable (Variable manipulated by researcher): The factor that experimenters deliberately change.\n\n• Explanation: The variable altered or controlled by the researcher in an experiment.\n• Example: The amount of sleep respondents get before taking a test."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which experimental variable represents the outcome or response that is being measured by the researcher?",
+        answers: [
+            "Independent Variable",
+            "Control Variable",
+            "Dependent Variable",
+            "Confounding Variable"
+        ],
+        correct: "Dependent Variable",
+        notes: "Dependent Variable (Measured outcome behavior variable): The outcome or response being measured.\n\n• Explanation: The measured outcome or result in an experiment.\n• Example: The final score achieved on an exam."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which variables are kept completely identical across all test groups during an experiment?",
+        answers: [
+            "Independent Variables",
+            "Confounding Variables",
+            "Control Variables",
+            "Dependent Variables"
+        ],
+        correct: "Control Variables",
+        notes: "Control Variable (Kept constant during experiment): Factors kept completely identical across all test groups.\n\n• Explanation: Factors maintained equally to ensure a fair test.\n• Example: Administering identical exam questions in the same room for all participants."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "What type of variable refers to an uncontrolled external factor that might corrupt or bias experimental results?",
+        answers: [
+            "Dependent Variable",
+            "Confounding Variable",
+            "Independent Variable",
+            "Control Variable"
+        ],
+        correct: "Confounding Variable",
+        notes: "Confounding Variable (Uncontrolled external bias factor): Unwanted outside variables that might corrupt test results.\n\n• Explanation: Unplanned external factors that can distort test results.\n• Example: Sudden loud construction noise outside while participants are testing."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which research design examines whether two variables are linked without attempting to establish causation?",
+        answers: [
+            "Laboratory Experiment",
+            "Case Study",
+            "Correlational Research",
+            "Self-Report"
+        ],
+        correct: "Correlational Research",
+        notes: "Correlational Research (Examining non-causal variable relationships): Studying if two variables are linked without manipulating them.\n\n• Explanation: Studying relationships between two variables without proving one causes the other.\n• Example: Studying whether high coffee consumption correlates with higher stress levels."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which research approach investigates biological brain structures alongside cognitive processing?",
+        answers: [
+            "Psychobiological Research",
+            "Correlational Research",
+            "Computer Simulation",
+            "Naturalistic Observation"
+        ],
+        correct: "Psychobiological Research",
+        notes: "Psychobiological Research (Linking brain and cognition): Studying biological brain structures alongside cognitive processing.\n\n• Explanation: Examining physical brain structures during active thought processes."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which data collection method involves gathering data by directly asking participants to describe their internal thoughts or feelings?",
+        answers: [
+            "Naturalistic Observation",
+            "Case Study",
+            "Self-Report",
+            "Psychobiological Research"
+        ],
+        correct: "Self-Report",
+        notes: "Self-Report (Participants describing internal thoughts): Gathering data by asking people directly about their own thoughts or feelings.\n\n• Explanation: Collecting data by directly asking participants about their thoughts via surveys or interviews."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which research method involves an intensive, in-depth study focused on a single individual or small group?",
+        answers: [
+            "Case Study",
+            "Laboratory Experiment",
+            "Correlational Research",
+            "Naturalistic Observation"
+        ],
+        correct: "Case Study",
+        notes: "Case Study (In-depth individual participant study): Intensive, long-term study focused on a single person or small group.\n\n• Explanation: An in-depth investigation of an individual with a rare condition."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which research method involves watching subjects in their natural environment without direct interference?",
+        answers: [
+            "Laboratory Experiment",
+            "Naturalistic Observation",
+            "Case Study",
+            "Computer Simulation"
+        ],
+        correct: "Naturalistic Observation",
+        notes: "Naturalistic Observation (Observing real-world natural behavior): Watching subjects naturally without interfering in their environment.\n\n• Explanation: Observing subjects in their natural environment without their knowledge.\n• Example: Observing how shoppers select items at a local market."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 1",
+        question: "Which method involves programming software to mimic and model human cognitive processes?",
+        answers: [
+            "Computer Simulations",
+            "Psychobiological Research",
+            "Self-Report",
+            "Case Study"
+        ],
+        correct: "Computer Simulations",
+        notes: "Computer Simulations (Modeling human cognitive processes): Programming software to mimic human thinking patterns.\n\n• Explanation: Creating computer algorithms that replicate human cognitive patterns."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which major brain division is responsible for controlling basic survival functions such as heart rate, breathing, and arousal?",
+        answers: [
+            "Hindbrain",
+            "Forebrain",
+            "Midbrain",
+            "Cerebral Cortex"
+        ],
+        correct: "Hindbrain",
+        notes: "Hindbrain (Basic survival controls): Located at the rear base of the brain; controls essential autonomic functions like breathing, heart rate, and motor coordination.\n\n• Explanation: The core base of the brain responsible for autonomic survival functions.\n• Example: Breathing during sleep and maintaining heartbeat automatically."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which hindbrain structure controls fine motor coordination, posture, balance, and procedural memory?",
+        answers: [
+            "Medulla Oblongata",
+            "Cerebellum",
+            "Pons",
+            "Reticular Activating System"
+        ],
+        correct: "Cerebellum",
+        notes: "Cerebellum (\"Little Brain\"): Controls balance, posture, and smooth, coordinated muscle movements.\n\n• Explanation: The region of the brain controlling posture and body balance.\n• Example: Riding a bicycle without falling or typing rapidly on a keyboard."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which part of the brainstem regulates vital involuntary functions like heart rate, blood pressure, and swallowing?",
+        answers: [
+            "Pons",
+            "Medulla Oblongata",
+            "Thalamus",
+            "Hippocampus"
+        ],
+        correct: "Medulla Oblongata",
+        notes: "Medulla Oblongata: Controls vital autonomic reflexes including cardiac rate, respiration, vomiting, and swallowing.\n\n• Explanation: Controls involuntary reflexes which could be fatal if damaged.\n• Example: Coughing automatically when choking."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which structure serves as a bridge passing neural information between the cerebral cortex and the cerebellum?",
+        answers: [
+            "Amgydala",
+            "Hypothalamus",
+            "Pons",
+            "Corpus Callosum"
+        ],
+        correct: "Pons",
+        notes: "Pons (Neural Bridge): Acts as a bridge connecting different brain regions, involved in sleep, facial movements, and dreaming.\n\n• Explanation: A bridge sending signals between different brain parts, aiding sleep."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which midbrain network regulates sleep, wakefulness, consciousness, and overall brain arousal?",
+        answers: [
+            "Reticular Activating System (RAS)",
+            "Limbic System",
+            "Basal Ganglia",
+            "Somatosensory Cortex"
+        ],
+        correct: "Reticular Activating System (RAS)",
+        notes: "Reticular Activating System (RAS): Network of neurons controlling sleep/wake cycles, alertness, and attention filtering.\n\n• Explanation: The brain's 'alarm clock' filtering attention and managing wakefulness."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which outer and top division of the brain is responsible for complex cognitive processing, memory, and voluntary action?",
+        answers: [
+            "Hindbrain",
+            "Midbrain",
+            "Forebrain",
+            "Brainstem"
+        ],
+        correct: "Forebrain",
+        notes: "Forebrain (Complex cognition center): The largest brain region comprising the cerebral cortex and subcortical structures like the thalamus and limbic system.\n\n• Explanation: The most advanced brain region handling higher cognition and emotion."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which forebrain structure acts as the sensory relay station, routing incoming sensory signals to the appropriate cortex regions?",
+        answers: [
+            "Thalamus",
+            "Hypothalamus",
+            "Hippocampus",
+            "Amygdala"
+        ],
+        correct: "Thalamus",
+        notes: "Thalamus (Sensory Relay Station): Relays all incoming sensory information (except smell) to specialized cortical areas.\n\n• Explanation: Traffic router for sensory signals sent to appropriate cortex regions.\n• Note: Smell (olfaction) is the only sense that bypasses this."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which structure regulates basic biological drives like hunger, thirst, temperature, and bodily homeostasis?",
+        answers: [
+            "Hippocampus",
+            "Hypothalamus",
+            "Basal Ganglia",
+            "Cerebellum"
+        ],
+        correct: "Hypothalamus",
+        notes: "Hypothalamus (Homeostasis & Drives): Regulates the autonomic nervous system, endocrine hormones, body temperature, hunger, and thirst.\n\n• Explanation: Manager of basic biological needs like hunger, thirst, and body temperature."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which limbic system structure is critical for emotion processing, particularly fear and threat detection?",
+        answers: [
+            "Hippocampus",
+            "Thalamus",
+            "Amygdala",
+            "Pons"
+        ],
+        correct: "Amygdala",
+        notes: "Amygdala (Emotional processing / Fear): Key structure in processing emotional responses, especially fear, aggression, and emotional memories.\n\n• Explanation: Center for fear processing; activates fight-or-flight response under threat.\n• Example: Jumping back immediately upon spotting a snake."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which brain structure plays a vital role in consolidating short-term memories into long-term declarative memories?",
+        answers: [
+            "Amygdala",
+            "Hippocampus",
+            "Basal Ganglia",
+            "Medulla Oblongata"
+        ],
+        correct: "Hippocampus",
+        notes: "Hippocampus (Memory Consolidation): Essential for forming new explicit long-term declarative memories.\n\n• Explanation: Center for long-term memory formation. Damage leads to anterograde amnesia.\n• Example: Remembering material studied for an upcoming exam."
+    },
+    {
+        type: "note",
+        category: "MODULE 2",
+        question: "Overview: 4 Lobes of the Cerebral Cortex",
+        notes: "4 Lobes of the Brain:\n\n1. Frontal Lobe: Executive function, planning, decision-making, motor control, and speech production (Broca's Area).\n2. Parietal Lobe: Somatosensory processing (touch, temperature, pain) and spatial awareness.\n3. Temporal Lobe: Auditory processing, memory, language comprehension (Wernicke's Area).\n4. Occipital Lobe: Primary visual processing center."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which cerebral lobe handles high-level executive functions, goal planning, reasoning, and voluntary motor control?",
+        answers: [
+            "Occipital Lobe",
+            "Parietal Lobe",
+            "Frontal Lobe",
+            "Temporal Lobe"
+        ],
+        correct: "Frontal Lobe",
+        notes: "Frontal Lobe (Executive control): Responsible for decision-making, impulse control, problem-solving, and primary motor activity.\n\n• Explanation: Executive center handling logic, decision-making, and self-control."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which lobe contains the primary somatosensory cortex, processing sensations of touch, temperature, and pain?",
+        answers: [
+            "Frontal Lobe",
+            "Parietal Lobe",
+            "Temporal Lobe",
+            "Occipital Lobe"
+        ],
+        correct: "Parietal Lobe",
+        notes: "Parietal Lobe (Somatosensory & Spatial processing): Processes tactile sensations (touch, pressure, temperature) and spatial orientation.\n\n• Explanation: Processes tactile sensory inputs and spatial awareness."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which lobe is primarily dedicated to visual processing and interpreting visual stimuli?",
+        answers: [
+            "Occipital Lobe",
+            "Temporal Lobe",
+            "Frontal Lobe",
+            "Parietal Lobe"
+        ],
+        correct: "Occipital Lobe",
+        notes: "Occipital Lobe (Visual Processing): Houses the primary visual cortex; processes visual features like shape, color, and motion.\n\n• Explanation: Visual processing center deriving meaning from visual stimuli."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which lobe is responsible for auditory processing, speech comprehension, and complex visual recognition?",
+        answers: [
+            "Frontal Lobe",
+            "Temporal Lobe",
+            "Parietal Lobe",
+            "Occipital Lobe"
+        ],
+        correct: "Temporal Lobe",
+        notes: "Temporal Lobe (Auditory & Language): Contains the primary auditory cortex and Wernicke's area for language comprehension.\n\n• Explanation: Focused on hearing and interpreting auditory/language inputs."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which area in the frontal lobe is specifically responsible for motor speech production?",
+        answers: [
+            "Wernicke's Area",
+            "Broca's Area",
+            "Somatosensory Area",
+            "Visual Area"
+        ],
+        correct: "Broca's Area",
+        notes: "Broca's Area (Speech production): Located in the left frontal lobe; controls the muscle movements necessary for producing fluent speech.\n\n• Explanation: Controls physical speech production.\n• Aphasia: When damaged, speech comprehension remains intact but speaking is difficult."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which brain region located in the left temporal lobe is crucial for understanding and comprehending language?",
+        answers: [
+            "Broca's Area",
+            "Wernicke's Area",
+            "Motor Strip",
+            "Corpus Callosum"
+        ],
+        correct: "Wernicke's Area",
+        notes: "Wernicke's Area (Language comprehension): Located in the left temporal lobe; responsible for comprehending written and spoken language.\n\n• Explanation: Region dedicated to understanding language meaning.\n• Aphasia: When damaged, speech remains fluent but lacks meaningful content."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "What dense band of nerve fibers connects the left and right cerebral hemispheres, allowing them to communicate?",
+        answers: [
+            "Basal Ganglia",
+            "Corpus Callosum",
+            "Reticular Formation",
+            "Internal Capsule"
+        ],
+        correct: "Corpus Callosum",
+        notes: "Corpus Callosum (Hemispheric Bridge): Large bundle of nerve fibers bridging the left and right cerebral hemispheres.\n\n• Explanation: Neural bridge transferring information between left and right hemispheres."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which neuroimaging technique measures brain electrical activity over time using electrodes placed on the scalp?",
+        answers: [
+            "fMRI",
+            "EEG (Electroencephalogram)",
+            "PET Scan",
+            "CT Scan"
+        ],
+        correct: "EEG (Electroencephalogram)",
+        notes: "EEG (Electroencephalogram): Measures electrical activity of large populations of active neurons using scalp electrodes; high temporal resolution.\n\n• Explanation: Measures brain electrical activity rapidly (high temporal resolution) but with lower spatial precision."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which brain imaging method measures metabolic activity by tracking radioactive glucose consumption in brain tissue?",
+        answers: [
+            "PET (Positron Emission Tomography)",
+            "MRI",
+            "EEG",
+            "TMS"
+        ],
+        correct: "PET (Positron Emission Tomography)",
+        notes: "PET Scan (Radioactive glucose tracking): Measures brain function by monitoring where radioactive tracer glucose is metabolized.\n\n• Explanation: Uses radioactive tracers to track metabolic activity in active brain areas."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 2",
+        question: "Which functional neuroimaging tool detects changes in blood oxygen levels (BOLD signal) to pinpoint active brain regions?",
+        answers: [
+            "PET Scan",
+            "fMRI (Functional MRI)",
+            "CT Scan",
+            "EEG"
+        ],
+        correct: "fMRI (Functional MRI)",
+        notes: "fMRI (Functional Magnetic Resonance Imaging): Tracks blood oxygenation levels (BOLD) to show high-resolution structural and functional activity.\n\n• Explanation: Monitors oxygenated blood flow to map specific active brain regions."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "What term describes the raw physical stimulation detected by sensory receptors before cognitive interpretation?",
+        answers: [
+            "Perception",
+            "Sensation",
+            "Transduction",
+            "Attention"
+        ],
+        correct: "Sensation",
+        notes: "Sensation (Raw physical input): The initial process of detecting environmental energy or stimuli through sensory organs.\n\n• Explanation: Raw reception of environmental signals by sensory organs prior to interpretation."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which cognitive process involves organizing, interpreting, and giving meaning to incoming sensory information?",
+        answers: [
+            "Transduction",
+            "Sensation",
+            "Perception",
+            "Habituation"
+        ],
+        correct: "Perception",
+        notes: "Perception (Interpreting sensory signals): The cognitive process of selecting, organizing, and interpreting sensory data into meaningful information.\n\n• Explanation: The brain assigning meaning to incoming sensory signals.\n• Example: Seeing a red sphere is sensation; recognizing it as a tomato is perception."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which perceptual processing approach builds understanding starting from raw sensory inputs up to higher mental constructs?",
+        answers: [
+            "Top-Down Processing",
+            "Bottom-Up Processing",
+            "Gestalt Integration",
+            "Schema Processing"
+        ],
+        correct: "Bottom-Up Processing",
+        notes: "Bottom-Up Processing (Data-Driven): Perception guided entirely by incoming raw physical features of the stimulus.\n\n• Explanation: Building perception starting from basic features without prior expectations."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which perceptual approach uses prior expectations, concepts, and existing knowledge to interpret incoming sensory data?",
+        answers: [
+            "Bottom-Up Processing",
+            "Top-Down Processing",
+            "Feature Detection",
+            "Transduction"
+        ],
+        correct: "Top-Down Processing",
+        notes: "Top-Down Processing (Concept-Driven): Perception influenced by expectations, memories, context, and prior knowledge.\n\n• Explanation: Using stored knowledge or context to quickly interpret sensory data."
+    },
+    {
+        type: "note",
+        category: "MODULE 3",
+        question: "Gestalt Laws of Perceptual Organization",
+        notes: "Key Gestalt Laws:\n\n1. Figure-Ground: Tendency to separate an object (figure) from its background (ground).\n2. Proximity: Grouping objects that are close to one another.\n3. Similarity: Grouping elements that look similar in shape, color, or size.\n4. Closure: Filling in missing gaps to perceive a complete, whole object.\n5. Good Continuation: Preferring smooth, continuous lines over jagged angles."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which Gestalt principle states that items situated physically close to each other are perceived as a unified group?",
+        answers: [
+            "Law of Similarity",
+            "Law of Proximity",
+            "Law of Closure",
+            "Law of Symmetry"
+        ],
+        correct: "Law of Proximity",
+        notes: "Law of Proximity: Elements located near each other tend to be grouped together perceptually.\n\n• Explanation: The brain groups objects that are physically adjacent.\n• Example: Three pairs of adjacent lines are seen as three pairs rather than six individual lines."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which Gestalt principle describes the mental tendency to fill in gaps in an incomplete image to perceive a coherent whole object?",
+        answers: [
+            "Law of Closure",
+            "Law of Continuity",
+            "Law of Proximity",
+            "Figure-Ground"
+        ],
+        correct: "Law of Closure",
+        notes: "Law of Closure: The mind fills in missing visual details to complete a recognizable shape or object.\n\n• Explanation: The mind automatically fills in gaps to form a complete shape."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which Gestalt perceptual law states that elements sharing physical traits (like color or shape) are grouped together?",
+        answers: [
+            "Law of Proximity",
+            "Law of Similarity",
+            "Law of Closure",
+            "Law of Common Fate"
+        ],
+        correct: "Law of Similarity",
+        notes: "Law of Similarity: Objects that look alike in color, shape, or size are grouped together in visual perception.\n\n• Explanation: The brain groups items that share similar visual characteristics."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "What term describes the cognitive mechanism of concentrating on specific sensory inputs while ignoring distractions?",
+        answers: [
+            "Habituation",
+            "Selective Attention",
+            "Transduction",
+            "Sensation"
+        ],
+        correct: "Selective Attention",
+        notes: "Selective Attention: Ability to focus on specific stimuli while filtering out irrelevant environmental noise.\n\n• Explanation: Focusing on a single stimulus while ignoring surrounding distractions."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which famous phenomenon demonstrates selective attention by enabling a person to focus on one conversation in a loud room while still noticing their name spoken nearby?",
+        answers: [
+            "Stroop Effect",
+            "Cocktail Party Effect",
+            "Change Blindness",
+            "Inattentional Blindness"
+        ],
+        correct: "Cocktail Party Effect",
+        notes: "Cocktail Party Effect: Ability to attend to a single auditory conversation in a noisy crowd while still automatically noticing salient inputs like your name.\n\n• Explanation: Focusing on one conversation in a noisy room but instantly noticing when your name is called elsewhere."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which early filter theorist proposed that unattended auditory messages are completely blocked based solely on physical features?",
+        answers: [
+            "Anne Treisman",
+            "Donald Broadbent",
+            "Neville Moray",
+            "Ulric Neisser"
+        ],
+        correct: "Donald Broadbent",
+        notes: "Broadbent's Early Filter Model: Proposed an early rigid filter that blocks out unattended sensory inputs prior to semantic processing.\n\n• Explanation: Proposed a rigid initial filter that completely blocks unattended stimuli."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which researcher modified Broadbent's model with Attenuation Theory, proposing that unattended stimuli are weakened rather than completely blocked?",
+        answers: [
+            "Donald Broadbent",
+            "Anne Treisman",
+            "George Miller",
+            "Jerry Fodor"
+        ],
+        correct: "Anne Treisman",
+        notes: "Treisman's Attenuation Theory: Proposed that unattended sensory messages are turned down (attenuated) like a volume knob rather than completely blocked.\n\n• Explanation: Unattended messages are turned down like a volume dial rather than completely blocked."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which failure of visual awareness occurs when a person fails to notice an unexpected object right in front of them because attention is focused elsewhere?",
+        answers: [
+            "Inattentional Blindness",
+            "Change Blindness",
+            "Visual Agnosia",
+            "Hemispatial Neglect"
+        ],
+        correct: "Inattentional Blindness",
+        notes: "Inattentional Blindness: Failing to notice a fully visible, unexpected object because attention is engaged on another task (e.g., Invisible Gorilla experiment).\n\n• Explanation: Missing a fully visible object because attention is focused elsewhere."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "What visual phenomenon occurs when an individual fails to detect a noticeable difference between two alternating visual scenes?",
+        answers: [
+            "Inattentional Blindness",
+            "Change Blindness",
+            "Aphasia",
+            "Prägnanz"
+        ],
+        correct: "Change Blindness",
+        notes: "Change Blindness: Inability to detect changes in details of a visual scene when the change occurs during a brief disruption or flicker.\n\n• Explanation: Failing to notice changes in a visual scene following a brief disruption."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 3",
+        question: "Which classic task demonstrates automaticity cognitive interference by showing that naming the ink color of a word is slower when the printed color conflicts with the word's meaning?",
+        answers: [
+            "Dichotic Listening Task",
+            "Stroop Effect",
+            "Turing Test",
+            "Visual Search Task"
+        ],
+        correct: "Stroop Effect",
+        notes: "Stroop Effect: Demonstration of cognitive interference where reading printed words happens automatically, delaying the ability to name the ink color if the word spells a conflicting color name.\n\n• Explanation: Cognitive processing is slowed when naming the ink color of a word that spells a different color."
+    },
+    {
+        type: "note",
+        category: "MODULE 4",
+        question: "Overview: The Three-Stage Model of Memory (Atkinson-Shiffrin)",
+        notes: "Atkinson-Shiffrin Model:\n\n1. Sensory Memory: Holds massive amounts of raw sensory input for milliseconds (Iconic) to a few seconds (Echoic).\n2. Short-Term / Working Memory: Holds active information briefly (~15–30 seconds) with limited capacity (7 ± 2 items).\n3. Long-Term Memory: Relatively permanent and unlimited storage system for knowledge, experiences, and skills."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which ultra-short memory store holds exact visual impressions for less than a second before fading?",
+        answers: [
+            "Echoic Memory",
+            "Iconic Memory",
+            "Implicit Memory",
+            "Episodic Memory"
+        ],
+        correct: "Iconic Memory",
+        notes: "Iconic Memory: Sensory memory for visual stimuli; retains a momentary mental snapshot lasting roughly a quarter to half a second.\n\n• Explanation: Brief visual memory trace lasting under half a second."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which sensory memory store retains auditory information for approximately 3 to 4 seconds?",
+        answers: [
+            "Iconic Memory",
+            "Echoic Memory",
+            "Procedural Memory",
+            "Semantic Memory"
+        ],
+        correct: "Echoic Memory",
+        notes: "Echoic Memory: Sensory memory store for acoustic/auditory stimuli, retaining sound traces for 3–4 seconds.\n\n• Explanation: Brief auditory sensory memory trace lasting 3 to 4 seconds."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "What memory technique involves grouping separate pieces of information into larger, meaningful units to expand short-term memory capacity?",
+        answers: [
+            "Maintenance Rehearsal",
+            "Chunking",
+            "Elaborative Encoding",
+            "Priming"
+        ],
+        correct: "Chunking",
+        notes: "Chunking: Organizing items into familiar, manageable units to overcome the 7 ± 2 item limit of short-term memory.\n\n• Explanation: Grouping individual items into meaningful units to aid recall.\n• Example: Remembering 09171234567 as 0917-123-4567."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "According to Craik and Lockhart's Levels of Processing theory, which depth of encoding leads to the strongest long-term retention?",
+        answers: [
+            "Structural Processing",
+            "Phonemic Processing",
+            "Semantic Processing",
+            "Acoustic Processing"
+        ],
+        correct: "Semantic Processing",
+        notes: "Semantic Processing (Deep Processing): Encoding information by focusing on its meaning, context, and connection to existing knowledge, leading to superior memory retention.\n\n• Explanation: Processing information deeply by focusing on meaning rather than physical sound or structure."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which long-term memory system stores conscious, declared facts and personal experiences?",
+        answers: [
+            "Implicit Memory",
+            "Explicit (Declarative) Memory",
+            "Procedural Memory",
+            "Non-declarative Memory"
+        ],
+        correct: "Explicit (Declarative) Memory",
+        notes: "Explicit / Declarative Memory: Memory requiring conscious recall, sub-divided into episodic (events) and semantic (facts) memory.\n\n• Explanation: Conscious memory systems for facts and personal experiences."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which form of explicit memory is responsible for storing personally experienced life events and autobiographical episodes?",
+        answers: [
+            "Semantic Memory",
+            "Episodic Memory",
+            "Procedural Memory",
+            "Sensory Memory"
+        ],
+        correct: "Episodic Memory",
+        notes: "Episodic Memory: Memory of specific personal events, episodes, and experiences tied to a particular time and place.\n\n• Explanation: Personal memory for specific life events and experiences."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which memory system contains general world knowledge, facts, concepts, and vocabulary without personal time contexts?",
+        answers: [
+            "Episodic Memory",
+            "Procedural Memory",
+            "Semantic Memory",
+            "Flashbulb Memory"
+        ],
+        correct: "Semantic Memory",
+        notes: "Semantic Memory: Storage of general facts, meanings, concepts, and world knowledge independent of personal experience.\n\n• Explanation: Memory for general world knowledge, concepts, and facts."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which implicit memory subsystem controls motor skills, habits, and physical actions like riding a bicycle?",
+        answers: [
+            "Declarative Memory",
+            "Procedural Memory",
+            "Episodic Memory",
+            "Semantic Memory"
+        ],
+        correct: "Procedural Memory",
+        notes: "Procedural Memory: Unconscious implicit memory for motor skills, habits, and physical behaviors (e.g., swimming, typing, driving).\n\n• Explanation: Unconscious memory for physical skills and motor habits."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which type of memory interference occurs when newly learned information prevents the recall of older stored memories?",
+        answers: [
+            "Proactive Interference",
+            "Retroactive Interference",
+            "Anterograde Amnesia",
+            "Decay Theory"
+        ],
+        correct: "Retroactive Interference",
+        notes: "Retroactive Interference: When new learning disrupts the retrieval of old information.\n\n• Explanation: Newly acquired information impairs the retrieval of older memories."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 4",
+        question: "Which type of interference occurs when previously stored old information hinders the learning or retrieval of new information?",
+        answers: [
+            "Retroactive Interference",
+            "Proactive Interference",
+            "Repression",
+            "Retrograde Amnesia"
+        ],
+        correct: "Proactive Interference",
+        notes: "Proactive Interference: When older memories interfere with the ability to learn or recall new information.\n\n• Explanation: Previously stored memories impair the acquisition or recall of new information."
+    },
+    {
+        type: "note",
+        category: "MODULE 5",
+        question: "Overview: Structure of Language",
+        notes: "Hierarchy of Language:\n\n1. Phoneme: Smallest unit of sound in a language (e.g., /b/, /t/).\n2. Morpheme: Smallest unit of language that carries meaning (e.g., prefixes, roots, suffixes like 'un-', 'cat', '-s').\n3. Syntax: Rules for combining words into grammatically correct sentences.\n4. Semantics: The set of rules used to derive meaning from morphemes, words, and sentences."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What is the smallest distinctive unit of sound in a spoken language that can alter meaning?",
+        answers: [
+            "Morpheme",
+            "Phoneme",
+            "Syntax",
+            "Lexicon"
+        ],
+        correct: "Phoneme",
+        notes: "Phoneme: The smallest basic building block of sound in speech (e.g., changing /k/ to /b/ turns 'cat' into 'bat').\n\n• Explanation: The smallest sound unit in speech that differentiates meaning."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What is the smallest meaningful unit of language, which includes root words, prefixes, and suffixes?",
+        answers: [
+            "Phoneme",
+            "Morpheme",
+            "Syntax",
+            "Grapheme"
+        ],
+        correct: "Morpheme",
+        notes: "Morpheme: The smallest unit of language that carries meaning (e.g., 'un-desira-ble' contains 3 morphemes).\n\n• Explanation: The smallest language unit carrying semantic meaning."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "Which linguistic system governs the rules for structuring words into grammatically correct phrases and sentences?",
+        answers: [
+            "Semantics",
+            "Pragmatics",
+            "Syntax",
+            "Phonology"
+        ],
+        correct: "Syntax",
+        notes: "Syntax: Grammatical rules determining word order and structure in sentence formation.\n\n• Explanation: Rules governing word order and grammatical structure."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "Which linguist proposed the nativist theory that humans possess an innate Language Acquisition Device (LAD)?",
+        answers: [
+            "B.F. Skinner",
+            "Noam Chomsky",
+            "Jean Piaget",
+            "Lev Vygotsky"
+        ],
+        correct: "Noam Chomsky",
+        notes: "Noam Chomsky (Nativist Theory): Argued that humans are biologically prewired with a Language Acquisition Device (LAD) and universal grammar.\n\n• Explanation: Proposed that humans have an innate biological capacity for language acquisition."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What step-by-step, methodical rule or procedure guarantees solving a problem if followed correctly?",
+        answers: [
+            "Heuristic",
+            "Algorithm",
+            "Insight",
+            "Mental Set"
+        ],
+        correct: "Algorithm",
+        notes: "Algorithm: A step-by-step, exhaustive procedure guaranteed to yield a correct solution to a problem.\n\n• Explanation: A methodical step-by-step procedure guaranteed to find a solution."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What practical rule-of-thumb strategy allows people to solve problems quickly, though it does not guarantee a correct answer?",
+        answers: [
+            "Algorithm",
+            "Heuristic",
+            "Confirmation Bias",
+            "Syllogism"
+        ],
+        correct: "Heuristic",
+        notes: "Heuristic: A simple, efficient thinking shortcut or rule-of-thumb used to make quick decisions, though susceptible to error.\n\n• Explanation: A mental shortcut used for fast decision-making."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What term describes a sudden realization of a problem's solution without explicit step-by-step effort?",
+        answers: [
+            "Insight",
+            "Algorithm",
+            "Incubation",
+            "Framing"
+        ],
+        correct: "Insight",
+        notes: "Insight (\"Aha!\" moment): A sudden, novel realization of the solution to a problem.\n\n• Explanation: A sudden realization of a problem's solution."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "Which cognitive obstacle involves the tendency to view objects only in terms of their customary or traditional functions?",
+        answers: [
+            "Mental Set",
+            "Functional Fixedness",
+            "Confirmation Bias",
+            "Belief Perseverance"
+        ],
+        correct: "Functional Fixedness",
+        notes: "Functional Fixedness: A cognitive bias limiting a person to using an object only in the way it is traditionally used.\n\n• Explanation: Inability to perceive unconventional uses for objects.\n• Example: Failing to realize a coin can be used as a screwdriver."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "Which cognitive heuristic estimates the likelihood of an event based on how easily examples of it come to mind?",
+        answers: [
+            "Representativeness Heuristic",
+            "Availability Heuristic",
+            "Anchoring Bias",
+            "Hindsight Bias"
+        ],
+        correct: "Availability Heuristic",
+        notes: "Availability Heuristic: Judging the frequency or probability of events based on how readily vivid examples are retrieved from memory.\n\n• Explanation: Estimating event likelihood based on how easily examples are recalled.\n• Example: Refusing to fly because news of a recent plane crash is fresh in mind."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "Which heuristic involves judging the likelihood of an entity belonging to a category based on how well it matches a prototype?",
+        answers: [
+            "Availability Heuristic",
+            "Representativeness Heuristic",
+            "Affect Heuristic",
+            "Confirmation Bias"
+        ],
+        correct: "Representativeness Heuristic",
+        notes: "Representativeness Heuristic: Categorizing or judging something by comparing it to an idealized prototype or stereotype.\n\n• Explanation: Judging something by how closely it matches a mental prototype."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What cognitive tendency leads individuals to search for, interpret, and favor information that confirms their preexisting beliefs?",
+        answers: [
+            "Hindsight Bias",
+            "Confirmation Bias",
+            "Framing Effect",
+            "Overconfidence"
+        ],
+        correct: "Confirmation Bias",
+        notes: "Confirmation Bias: The strong tendency to seek out and recall evidence supporting prior beliefs while ignoring contradictory evidence.\n\n• Explanation: Seeking out information that supports prior beliefs while ignoring opposing evidence."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 5",
+        question: "What bias describes the tendency of people to perceive past events as having been completely predictable after they have occurred?",
+        answers: [
+            "Framing Effect",
+            "Hindsight Bias",
+            "Belief Perseverance",
+            "Sunk Cost Fallacy"
+        ],
+        correct: "Hindsight Bias",
+        notes: "Hindsight Bias (\"I-knew-it-all-along\" phenomenon): The tendency to falsely believe, after an outcome is known, that one would have accurately predicted it.\n\n• Explanation: The belief that an event was predictable after it has already occurred."
+    },
+    {
+        type: "note",
+        category: "MODULE 6",
+        question: "Overview: Major Theories of Intelligence",
+        notes: "Theories of Intelligence:\n\n1. Spearman's Two-Factor Theory: Proposed General Intelligence (g factor) and Specific Abilities (s factor).\n2. Cattell-Horn-Carroll (CHC) Theory: Fluid Intelligence (Gf - problem solving without prior knowledge) vs. Crystallized Intelligence (Gc - accumulated knowledge).\n3. Sternberg's Triarchic Theory: Analytical, Creative, and Practical Intelligence.\n4. Gardner's Multiple Intelligences: Proposed 8+ distinct domains of intelligence."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 6",
+        question: "Which psychologist proposed the existence of a single general intelligence factor known as 'g'?",
+        answers: [
+            "Howard Gardner",
+            "Charles Spearman",
+            "Robert Sternberg",
+            "Alfred Binet"
+        ],
+        correct: "Charles Spearman",
+        notes: "Charles Spearman (g Factor): Proposed that a overall mental capacity called general intelligence (g) underlies all specific cognitive abilities (s factors).\n\n• Explanation: Proposed a single underlying general cognitive factor ('g')."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 6",
+        question: "According to Raymond Cattell, which type of intelligence involves the ability to reason abstractly and solve novel problems independent of past learning?",
+        answers: [
+            "Crystallized Intelligence",
+            "Fluid Intelligence",
+            "Practical Intelligence",
+            "Emotional Intelligence"
+        ],
+        correct: "Fluid Intelligence",
+        notes: "Fluid Intelligence (Gf): Capacity to think logically, reason abstractly, and solve unfamiliar problems without relying on stored knowledge; peaks in young adulthood.\n\n• Explanation: Capacity to solve novel problems logically without relying on prior knowledge."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 6",
+        question: "Which type of intelligence reflects accumulated knowledge, vocabulary, and skills acquired through education and experience?",
+        answers: [
+            "Fluid Intelligence",
+            "Crystallized Intelligence",
+            "Creative Intelligence",
+            "Spatial Intelligence"
+        ],
+        correct: "Crystallized Intelligence",
+        notes: "Crystallized Intelligence (Gc): Accumulated factual knowledge and verbal skills that increase or stay stable throughout adulthood.\n\n• Explanation: Knowledge gained over time through education and experience."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 6",
+        question: "Which components comprise Robert Sternberg's Triarchic Theory of Intelligence?",
+        answers: [
+            "Verbal, Mathematical, and Spatial",
+            "Analytical, Creative, and Practical",
+            "Fluid, Crystallized, and General",
+            "Intrapersonal, Interpersonal, and Existential"
+        ],
+        correct: "Analytical, Creative, and Practical",
+        notes: "Sternberg's Triarchic Theory:\n• Analytical: Problem-solving.\n• Creative: Adapting to new situations.\n• Practical: Real-world adaptation.\n\n• Explanation: Three intelligence domains: Academic (Analytical), Innovative (Creative), and Contextual (Practical)."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 6",
+        question: "What psychometric term refers to the consistency and stability of test scores over repeated measurements?",
+        answers: [
+            "Validity",
+            "Reliability",
+            "Standardization",
+            "Norming"
+        ],
+        correct: "Reliability",
+        notes: "Reliability: The extent to which an assessment tool produces consistent and repeatable results.\n\n• Explanation: Score consistency across repeated testing administration."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 6",
+        question: "What term describes the degree to which a psychometric test actually measures or predicts what it claims to measure?",
+        answers: [
+            "Reliability",
+            "Validity",
+            "Standardization",
+            "Variance"
+        ],
+        correct: "Validity",
+        notes: "Validity: The accuracy of a test in measuring the specific construct it is designed to measure.\n\n• Explanation: Extent to which a test accurately measures what it intends to measure."
+    },
+    {
+        type: "note",
+        category: "MODULE 7",
+        question: "Overview: Classical Theories of Emotion",
+        notes: "Theories of Emotion:\n\n1. James-Lange Theory: Physical arousal happens FIRST, then emotion is felt (Arousal -> Emotion).\n2. Cannon-Bard Theory: Physical arousal and emotional experience occur SIMULTANEOUSLY.\n3. Schachter-Singer Two-Factor Theory: Physical arousal + Cognitive Label -> Emotion."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 7",
+        question: "Which theory of emotion posits that emotional experience is a direct reaction to physiological bodily responses (e.g., 'we feel sad because we cry')?",
+        answers: [
+            "Cannon-Bard Theory",
+            "James-Lange Theory",
+            "Two-Factor Theory",
+            "Lazarus Cognitive Theory"
+        ],
+        correct: "James-Lange Theory",
+        notes: "James-Lange Theory: Physiological arousal precedes and directly causes the conscious experience of an emotion.\n\n• Explanation: Bodily responses occur first, followed by emotional awareness."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 7",
+        question: "Which theory of emotion states that physiological arousal and emotional experience happen at the exact same time independently?",
+        answers: [
+            "James-Lange Theory",
+            "Cannon-Bard Theory",
+            "Schachter-Singer Theory",
+            "Drive-Reduction Theory"
+        ],
+        correct: "Cannon-Bard Theory",
+        notes: "Cannon-Bard Theory: An emotion-triggering stimulus simultaneously triggers physiological responses and the subjective experience of emotion.\n\n• Explanation: Physical reactions and emotional feelings occur simultaneously."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 7",
+        question: "Which theory of emotion asserts that emotion requires both physical arousal and a cognitive interpretation or label of that arousal?",
+        answers: [
+            "Schachter-Singer Two-Factor Theory",
+            "James-Lange Theory",
+            "Opponent-Process Theory",
+            "Incentive Theory"
+        ],
+        correct: "Schachter-Singer Two-Factor Theory",
+        notes: "Schachter-Singer Two-Factor Theory: Emotion is determined by physiological arousal AND a cognitive label applied based on the environmental context.\n\n• Explanation: Emotion requires physical arousal combined with cognitive evaluation."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 7",
+        question: "Which sleep stage is characterized by rapid eye movements, high brain activity resembling wakefulness, and vivid dreaming?",
+        answers: [
+            "Stage N1 (NREM 1)",
+            "Stage N2 (NREM 2)",
+            "Stage N3 (Slow-Wave Sleep)",
+            "REM Sleep"
+        ],
+        correct: "REM Sleep",
+        notes: "REM Sleep (Rapid Eye Movement): Stage of sleep marked by muscle paralysis, rapid eye movement, brain activity similar to being awake, and dreaming.\n\n• Explanation: Stage marked by vivid dreams, active brain waves, and muscle paralysis."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 7",
+        question: "Which deep stage of NREM sleep is characterized by delta brain waves and is crucial for biological restoration and growth hormone release?",
+        answers: [
+            "Stage N1",
+            "Stage N2",
+            "Stage N3 (Slow-Wave Sleep)",
+            "REM Sleep"
+        ],
+        correct: "Stage N3 (Slow-Wave Sleep)",
+        notes: "Stage N3 (Deep / Slow-Wave Sleep): Characterized by high-amplitude delta waves; crucial for physical repair, recovery, and growth.\n\n• Explanation: Deepest sleep stage critical for physical restoration."
+    },
+    {
+        type: "note",
+        category: "MODULE 8",
+        question: "Overview: Piaget's 4 Stages of Cognitive Development",
+        notes: "Piaget's Cognitive Stages:\n\n1. Sensorimotor (0–2 yrs): Learns through senses and motor actions; develops Object Permanence.\n2. Preoperational (2–7 yrs): Symbolic thinking, egocentrism, lacks Conservation.\n3. Concrete Operational (7–11 yrs): Logical thinking about concrete events, understands Conservation.\n4. Formal Operational (12+ yrs): Abstract logic, hypothetical-deductive reasoning."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 8",
+        question: "In Piaget's theory, what key cognitive milestone is achieved during the sensorimotor stage when an infant understands that objects exist even when out of sight?",
+        answers: [
+            "Conservation",
+            "Object Permanence",
+            "Egocentrism",
+            "Theory of Mind"
+        ],
+        correct: "Object Permanence",
+        notes: "Object Permanence: The cognitive realization that physical objects continue to exist even when they cannot be directly seen, heard, or touched.\n\n• Explanation: Realization that objects continue existing when hidden."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 8",
+        question: "Which feature of Piaget's preoperational stage describes a child's inability to see a situation from another person's perspective?",
+        answers: [
+            "Centration",
+            "Egocentrism",
+            "Animism",
+            "Irreversibility"
+        ],
+        correct: "Egocentrism",
+        notes: "Egocentrism: Inability of preoperational children to conceptualize or adopt another person's viewpoint.\n\n• Explanation: Difficulty taking another person's perspective."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 8",
+        question: "During which Piagetian stage does a child gain the ability to understand conservation (that quantity remains constant despite changes in physical shape)?",
+        answers: [
+            "Sensorimotor Stage",
+            "Preoperational Stage",
+            "Concrete Operational Stage",
+            "Formal Operational Stage"
+        ],
+        correct: "Concrete Operational Stage",
+        notes: "Concrete Operational Stage (7–11 years): Children gain mental operations that enable them to think logically about concrete events and master conservation.\n\n• Explanation: Stage where children comprehend conservation laws."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 8",
+        question: "Which final Piagetian stage is characterized by the capacity for systematic, abstract, and hypothetical reasoning?",
+        answers: [
+            "Preoperational Stage",
+            "Concrete Operational Stage",
+            "Formal Operational Stage",
+            "Postformal Stage"
+        ],
+        correct: "Formal Operational Stage",
+        notes: "Formal Operational Stage (12+ years): Development of abstract thinking, scientific problem solving, and hypothetical-deductive reasoning.\n\n• Explanation: Stage characterized by abstract and hypothetical logic."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 8",
+        question: "According to Vygotsky, what concept refers to the range of tasks a learner can perform with guidance from a More Knowledgeable Other (MKO)?",
+        answers: [
+            "Scaffolding",
+            "Zone of Proximal Development (ZPD)",
+            "Assimilation",
+            "Schema"
+        ],
+        correct: "Zone of Proximal Development (ZPD)",
+        notes: "Zone of Proximal Development (ZPD): The gap between what a learner can do independently and what they can achieve with guidance.\n\n• Explanation: Gap between independent capacity and guided potential."
+    },
+    {
+        type: "quiz",
+        category: "MODULE 8",
+        question: "What term describes the instructional support given by a teacher or peer that is gradually removed as the learner gains independence?",
+        answers: [
+            "Accommodation",
+            "Scaffolding",
+            "Conservation",
+            "Centration"
+        ],
+        correct: "Scaffolding",
+        notes: "Scaffolding: Temporary support provided by a tutor or peer that is incrementally withdrawn as the learner achieves mastery.\n\n• Explanation: Temporary instructional support removed gradually."
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let streak = 0;
+let isMuted = false;
+let quizData = [];
+let currentNotes = "";
+let wrongQuestions = [];
+let bookmarkedQuestions = [];
+let userAnswers = {};
+let categoryStats = {};
+let currentReviewMode = 'answers';
+
+let currentFontSize = "100%";
+let currentFontFamily = "'Poppins', sans-serif";
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    const isOpen = dropdown.classList.contains("open");
+    
+    document.querySelectorAll(".custom-dropdown").forEach(d => d.classList.remove("open"));
+    
+    if (!isOpen) {
+        dropdown.classList.add("open");
+    }
+}
+
+window.addEventListener('click', function(e) {
+    if (!e.target.closest('.custom-dropdown')) {
+        document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('open'));
+    }
+});
+
+function populateCategories() {
+    const categoryList = document.getElementById("categoryList");
+    const categories = ["All", ...new Set(questions.map(q => q.category).filter(Boolean))];
+    
+    categoryList.innerHTML = "";
+    categories.forEach(cat => {
+        let div = document.createElement("div");
+        div.className = "dropdown-list-item";
+        if (cat === "All") div.classList.add("selected");
+        
+        let labelText = cat === "All" ? "All Categories" : cat;
+        div.innerHTML = `<span>${labelText}</span><div class="radio-icon"></div>`;
+        
+        div.onclick = function() {
+            document.getElementById("selectedCategoryText").textContent = labelText;
+            document.getElementById("categorySelectValue").value = cat;
+            categoryList.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            toggleDropdown('categoryDropdown');
+        };
+        
+        categoryList.appendChild(div);
+    });
+}
+
+function selectFontSize(value, label, el) {
+    document.getElementById("selectedFontSizeText").textContent = label;
+    changeFontSize(value);
+    el.parentElement.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+    el.classList.add("selected");
+    toggleDropdown('fontSizeDropdown');
+}
+
+function selectFontFamily(value, label, el) {
+    document.getElementById("selectedFontFamilyText").textContent = label;
+    changeFontFamily(value);
+    el.parentElement.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+    el.classList.add("selected");
+    toggleDropdown('fontFamilyDropdown');
+}
+
+populateCategories();
+loadSettings();
+checkSavedProgress();
+
+function openSettingsModal() {
+    document.getElementById("settingsModal").classList.remove("hidden");
+}
+
+function closeSettingsModal() {
+    document.getElementById("settingsModal").classList.add("hidden");
+}
+
+function changeFontSize(size) {
+    currentFontSize = size;
+    document.documentElement.style.setProperty('--base-font-scale', size);
+    saveSettings();
+}
+
+function changeFontFamily(family) {
+    currentFontFamily = family;
+    document.documentElement.style.setProperty('--app-font', family);
+    saveSettings();
+}
+
+function toggleSound() {
+    isMuted = !isMuted;
+    updateSoundUI();
+    saveSettings();
+}
+
+function updateSoundUI() {
+    const statusText = document.getElementById("soundStatusText");
+    if(statusText) {
+        statusText.textContent = isMuted ? "OFF 🔇" : "ON 🔊";
+    }
+}
+
+function saveSettings() {
+    const settings = {
+        fontSize: currentFontSize,
+        fontFamily: currentFontFamily,
+        isMuted: isMuted
+    };
+    localStorage.setItem("quizSettings", JSON.stringify(settings));
+}
+
+function loadSettings() {
+    const saved = localStorage.getItem("quizSettings");
+    if (saved) {
+        const settings = JSON.parse(saved);
+        if (settings.fontSize) {
+            currentFontSize = settings.fontSize;
+            document.documentElement.style.setProperty('--base-font-scale', currentFontSize);
+        }
+        if (settings.fontFamily) {
+            currentFontFamily = settings.fontFamily;
+            document.documentElement.style.setProperty('--app-font', currentFontFamily);
+        }
+        if (settings.isMuted !== undefined) {
+            isMuted = settings.isMuted;
+            updateSoundUI();
+        }
+    }
+}
+
+function goHome() {
+    if (quizData.length > 0 && currentQuestion < quizData.length) {
+        saveProgress();
+    }
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("notesScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.remove("hidden");
+    checkSavedProgress();
+}
+
+function saveProgress() {
+    const state = {
+        quizData,
+        currentQuestion,
+        score,
+        streak,
+        userAnswers,
+        categoryStats,
+        wrongQuestions,
+        bookmarkedQuestions
+    };
+    localStorage.setItem("quizProgress", JSON.stringify(state));
+}
+
+function checkSavedProgress() {
+    const saved = localStorage.getItem("quizProgress");
+    if (saved) {
+        document.getElementById("resumeBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("resumeBtn").classList.add("hidden");
+    }
+}
+
+function resumeQuiz() {
+    const saved = localStorage.getItem("quizProgress");
+    if (!saved) return;
+
+    const state = JSON.parse(saved);
+    quizData = state.quizData;
+    currentQuestion = state.currentQuestion;
+    score = state.score;
+    streak = state.streak;
+    userAnswers = state.userAnswers;
+    categoryStats = state.categoryStats;
+    wrongQuestions = state.wrongQuestions;
+    bookmarkedQuestions = state.bookmarkedQuestions;
+
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("notesScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+
+    updateStreakDisplay();
+    loadQuestion();
+}
+
+function clearSavedProgress() {
+    localStorage.removeItem("quizProgress");
+    document.getElementById("resumeBtn").classList.add("hidden");
+}
+
+function restartQuiz() {
+    clearSavedProgress();
+    startQuiz(false);
+}
+
+function toggleBookmark() {
+    let q = quizData[currentQuestion];
+    if (q.type === "note") return;
+    
+    const index = bookmarkedQuestions.findIndex(item => item.question === q.question);
+    const btn = document.getElementById("bookmarkBtn");
+
+    if (index > -1) {
+        bookmarkedQuestions.splice(index, 1);
+        btn.classList.remove("bookmarked");
+        btn.textContent = "📍";
+    } else {
+        bookmarkedQuestions.push(q);
+        btn.classList.add("bookmarked");
+        btn.textContent = "📌";
+    }
+    saveProgress();
+}
+
+function updateBookmarkIcon() {
+    let q = quizData[currentQuestion];
+    const btn = document.getElementById("bookmarkBtn");
+    
+    if (q.type === "note") {
+        btn.classList.add("hidden");
+        return;
+    } else {
+        btn.classList.remove("hidden");
+    }
+
+    const isBookmarked = bookmarkedQuestions.some(item => item.question === q.question);
+    
+    if (isBookmarked) {
+        btn.classList.add("bookmarked");
+        btn.textContent = "📌";
+    } else {
+        btn.classList.remove("bookmarked");
+        btn.textContent = "📍";
+    }
+}
+
+function playSound(type) {
+    if (isMuted) return;
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+    } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    }
+}
+
+function triggerConfetti() {
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+}
+
+function shuffle(array){
+    for(let i=array.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
+    }
+}
+
+function startQuiz(randomize){
+    clearSavedProgress();
+    const selectedCategory = document.getElementById("categorySelectValue").value;
+
+    let filteredQuestions = questions;
+
+    if (selectedCategory !== "All") {
+        filteredQuestions = questions.filter(q => q.category === selectedCategory);
+    }
+
+    if (filteredQuestions.length === 0) {
+        alert("No questions found!");
+        return;
+    }
+
+    quizData = JSON.parse(JSON.stringify(filteredQuestions));
+    quizData.forEach(q => delete q.answered);
+
+    if(randomize){
+        shuffle(quizData);
+    }
+
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    categoryStats = {};
+    updateStreakDisplay();
+
+    wrongQuestions = [];
+    userAnswers = {};
+
+    saveProgress();
+    loadQuestion();
+}
+
+function updateStreakDisplay() {
+    const badge = document.getElementById("streakBadge");
+    if (streak >= 2) {
+        badge.textContent = `🔥 ${streak} in a row!`;
+        badge.classList.remove("hidden");
+    } else {
+        badge.classList.add("hidden");
+    }
+}
+
+function updateProgressBar() {
+    const totalQuizQuestions = quizData.filter(item => item.type !== "note").length;
+    let completedQuizQuestions = 0;
+
+    for (let i = 0; i <= currentQuestion; i++) {
+        if (quizData[i].type !== "note" && (quizData[i].answered || userAnswers[i] !== undefined || i < currentQuestion)) {
+            completedQuizQuestions++;
+        }
+    }
+
+    const percentage = totalQuizQuestions > 0 ? Math.min(100, (completedQuizQuestions / totalQuizQuestions) * 100) : 0;
+    document.getElementById("progressFill").style.width = `${percentage}%`;
+}
+
+function loadQuestion(){
+    updateProgressBar();
+    updateBookmarkIcon();
+
+    document.getElementById("notesBtn").classList.add("hidden");
+    document.getElementById("nextBtn").classList.add("hidden");
+    
+    if(currentQuestion > 0) {
+        document.getElementById("prevBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("prevBtn").classList.add("hidden");
+    }
+
+    let q = quizData[currentQuestion];
+    let contentArea = document.getElementById("quizContentArea");
+
+    if (q.type === "note") {
+        let noteIndex = 0;
+        let totalNotesCount = 0;
+        for(let i = 0; i <= currentQuestion; i++) {
+            if(quizData[i].type === "note") {
+                if(i === currentQuestion) {
+                    noteIndex = ++totalNotesCount;
+                } else {
+                    totalNotesCount++;
+                }
+            }
+        }
+        let totalRealNotes = quizData.filter(item => item.type === "note").length;
+
+        document.getElementById("questionNumber").textContent = `Review Note (${noteIndex} of ${totalRealNotes})`;
+
+        contentArea.innerHTML = `
+            <div class="pure-note-card">
+                <div class="pure-note-title">${q.question}</div>
+                <div class="pure-note-content">${q.notes}</div>
+            </div>
+        `;
+
+        document.getElementById("nextBtn").classList.remove("hidden");
+        document.getElementById("nextBtn").textContent = currentQuestion === quizData.length - 1 ? "Finish Review ►" : "Next ►";
+
+    } else {
+        let quizIndex = 0;
+        let totalQuizCount = 0;
+        for(let i = 0; i <= currentQuestion; i++) {
+            if(quizData[i].type !== "note") {
+                if(i === currentQuestion) {
+                    quizIndex = ++totalQuizCount;
+                } else {
+                    totalQuizCount++;
+                }
+            }
+        }
+        
+        let totalRealQuizQuestions = quizData.filter(item => item.type !== "note").length;
+
+        document.getElementById("questionNumber").textContent =
+        `Question ${quizIndex} of ${totalRealQuizQuestions}`;
+
+        contentArea.innerHTML = `
+            <h2 id="questionText">${q.question}</h2>
+            <div id="answers"></div>
+        `;
+
+        let answersDiv = document.getElementById("answers");
+
+        q.answers.forEach(answer=>{
+            let btn = document.createElement("button");
+            btn.type = "button";
+            btn.classList.add("answer");
+            btn.textContent = answer;
+
+            btn.onclick = function(){
+                selectAnswer(answer, q);
+            };
+
+            answersDiv.appendChild(btn);
+        });
+
+        if(userAnswers[currentQuestion] !== undefined) {
+            let savedAnswer = userAnswers[currentQuestion];
+            highlightAnswers(savedAnswer, q, true);
+        }
+    }
+}
+
+function selectAnswer(selectedAnswer, q) {
+    const isFirstTime = !q.answered;
+    userAnswers[currentQuestion] = selectedAnswer;
+
+    const cat = q.category || "General";
+    if (!categoryStats[cat]) {
+        categoryStats[cat] = { correct: 0, total: 0 };
+    }
+
+    if(selectedAnswer === q.correct){
+        if(isFirstTime) {
+            score++;
+            q.answered = true;
+            streak++;
+            categoryStats[cat].correct++;
+            categoryStats[cat].total++;
+            playSound('correct');
+        }
+    } else {
+        if(isFirstTime) {
+            q.answered = true;
+            streak = 0;
+            categoryStats[cat].total++;
+            playSound('wrong');
+            if(!wrongQuestions.some(item => item.question === q.question)){
+                wrongQuestions.push(q);
+            }
+        }
+    }
+
+    updateStreakDisplay();
+    updateProgressBar();
+    highlightAnswers(selectedAnswer, q, false);
+    saveProgress();
+}
+
+function highlightAnswers(selectedAnswer, q, isReview) {
+    let allButtons = document.querySelectorAll(".answer");
+
+    allButtons.forEach(b => {
+        b.disabled = true;
+
+        if(b.textContent === q.correct) {
+            if(selectedAnswer === q.correct) {
+                b.classList.add("correct");
+            } else {
+                b.classList.add("correct-answer");
+            }
+        }
+        
+        if(b.textContent === selectedAnswer && selectedAnswer !== q.correct) {
+            b.classList.add("wrong");
+        }
+    });
+
+    currentNotes = q.notes;
+    document.getElementById("notesBtn").classList.remove("hidden");
+    document.getElementById("notesBtn").onclick = function(){
+        showNotes();
+    };
+
+    let isLastQuestion = currentQuestion === quizData.length - 1;
+
+    document.getElementById("nextBtn").classList.remove("hidden");
+    document.getElementById("nextBtn").textContent = isLastQuestion ? "Finish Quiz ►" : "Next Question ►";
+}
+
+function prevQuestion() {
+    if(currentQuestion > 0) {
+        currentQuestion--;
+        saveProgress();
+        loadQuestion();
+    }
+}
+
+function showNotes(){
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("notesScreen").classList.remove("hidden");
+    document.getElementById("notesBox").textContent = currentNotes;
+}
+
+function backToQuestion(){
+    document.getElementById("notesScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+}
+
+document.getElementById("nextBtn").onclick = function(){
+    currentQuestion++;
+    saveProgress();
+    if(currentQuestion < quizData.length){
+        loadQuestion();
+    }else{
+        showScore();
+    }
+};
+
+function showScore(){
+    clearSavedProgress(); 
+    
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.remove("hidden");
+
+    const totalQuizQuestions = quizData.filter(q => q.type !== "note").length;
+    const totalNotesCount = quizData.filter(q => q.type === "note").length;
+    const retakeBtn = document.getElementById("retakeAllBtn");
+
+    if (totalQuizQuestions === 0) {
+        document.getElementById("scoreHeaderTitle").textContent = "Notes Review Finished!";
+        document.getElementById("scoreText").innerHTML = `You have successfully completed reviewing the notes!`;
+        
+        document.getElementById("analyticsCard").classList.add("hidden");
+        document.getElementById("reviewAllAnswersBtn").classList.add("hidden");
+        
+        if (totalNotesCount > 0) {
+            document.getElementById("reviewAllNotesBtn").classList.remove("hidden");
+        } else {
+            document.getElementById("reviewAllNotesBtn").classList.add("hidden");
+        }
+
+        document.getElementById("retakeWrongBtn").classList.add("hidden");
+        document.getElementById("reviewBookmarkedBtn").classList.add("hidden");
+        
+        retakeBtn.textContent = "Re-read All Notes";
+        retakeBtn.classList.remove("hidden");
+        return;
+    }
+
+    document.getElementById("scoreHeaderTitle").textContent = "Quiz Finished!";
+    document.getElementById("analyticsCard").classList.remove("hidden");
+    document.getElementById("reviewAllAnswersBtn").classList.remove("hidden");
+    
+    if (totalNotesCount > 0) {
+        document.getElementById("reviewAllNotesBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("reviewAllNotesBtn").classList.add("hidden");
+    }
+
+    retakeBtn.textContent = "Retake All Questions";
+
+    const percentage = (score / totalQuizQuestions) * 100;
+
+    if(wrongQuestions.length === 0){
+        document.getElementById("scoreText").innerHTML =
+        `Perfect Score!<br>${score} / ${totalQuizQuestions}`;
+        playSound('correct');
+        triggerConfetti();
+    } else {
+        document.getElementById("scoreText").textContent =
+        `Your Score: ${score} / ${totalQuizQuestions}`;
+        if (percentage >= 70) {
+            triggerConfetti();
+        }
+    }
+
+    const analyticsList = document.getElementById("analyticsList");
+    analyticsList.innerHTML = "";
+    for (let cat in categoryStats) {
+        let stat = categoryStats[cat];
+        let pct = Math.round((stat.correct / stat.total) * 100);
+        let status = pct >= 70 ? "🟢" : "🔴";
+        
+        let div = document.createElement("div");
+        div.className = "analytics-item";
+        div.innerHTML = `<span><strong>${cat}:</strong> ${stat.correct}/${stat.total}</span> <span>${pct}% ${status}</span>`;
+        analyticsList.appendChild(div);
+    }
+
+    if(wrongQuestions.length > 0){
+        document.getElementById("retakeWrongBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("retakeWrongBtn").classList.add("hidden");
+    }
+
+    if(bookmarkedQuestions.length > 0){
+        document.getElementById("reviewBookmarkedBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("reviewBookmarkedBtn").classList.add("hidden");
+    }
+}
+
+function showDetailedReview(mode) {
+    currentReviewMode = mode || 'answers';
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.remove("hidden");
+
+    const titleEl = document.getElementById("detailedReviewTitle");
+    const subtitleEl = document.getElementById("detailedReviewSubtitle");
+
+    if (currentReviewMode === 'notes') {
+        titleEl.textContent = "All Notes & Explanations";
+        subtitleEl.textContent = "Review all the stand-alone notes and key takeaways:";
+    } else {
+        titleEl.textContent = "Detailed Review";
+        subtitleEl.textContent = "Review your answers and detailed notes for each question:";
+    }
+
+    const reviewCategoryList = document.getElementById("reviewCategoryList");
+    let availableCategories = quizData;
+    if (currentReviewMode === 'notes') {
+        availableCategories = quizData.filter(q => q.type === "note");
+    }
+    
+    const categories = ["All", ...new Set(availableCategories.map(q => q.category).filter(Boolean))];
+    
+    reviewCategoryList.innerHTML = "";
+    categories.forEach(cat => {
+        let div = document.createElement("div");
+        div.className = "dropdown-list-item";
+        if (cat === "All") div.classList.add("selected");
+        
+        let labelText = cat === "All" ? "All Categories" : cat;
+        div.innerHTML = `<span>${labelText}</span><div class="radio-icon"></div>`;
+        
+        div.onclick = function() {
+            document.getElementById("selectedReviewCategoryText").textContent = labelText;
+            document.getElementById("reviewCategoryFilterValue").value = cat;
+            reviewCategoryList.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            toggleDropdown('reviewCategoryDropdown');
+            renderDetailedReviewCards();
+        };
+        
+        reviewCategoryList.appendChild(div);
+    });
+
+    renderDetailedReviewCards();
+}
+
+function renderDetailedReviewCards() {
+    const container = document.getElementById("detailedReviewContainer");
+    container.innerHTML = "";
+
+    const selectedCategory = document.getElementById("reviewCategoryFilterValue").value;
+    let reviewItemCount = 0;
+
+    quizData.forEach((q, index) => {
+        if (selectedCategory !== "All" && q.category !== selectedCategory) {
+            return;
+        }
+
+        if (currentReviewMode === 'notes') {
+            if (q.type !== "note") return;
+            reviewItemCount++;
+            const card = document.createElement("div");
+            card.className = "review-card";
+            card.innerHTML = `
+                <div class="review-card-header">
+                    <span style="font-weight: 700; color: #38bdf8;">Note #${reviewItemCount}</span>
+                </div>
+                <div class="review-q-text">${q.question}</div>
+                <div class="review-notes" style="border-left-color: #38bdf8; margin-top: 0;">${q.notes}</div>
+            `;
+            container.appendChild(card);
+        } else {
+            if (q.type === "note") return;
+
+            reviewItemCount++;
+            const userAns = userAnswers[index];
+            const isCorrect = userAns === q.correct;
+            const statusBadge = isCorrect ? "🟢 Correct" : "🔴 Incorrect";
+            
+            const card = document.createElement("div");
+            card.className = "review-card";
+            card.innerHTML = `
+                <div class="review-card-header">
+                    <span style="font-weight: 700;">Q${reviewItemCount}</span>
+                    <span>${statusBadge}</span>
+                </div>
+                <div class="review-q-text">${q.question}</div>
+                <div class="review-ans-row" style="color: ${isCorrect ? '#4ade80' : '#f87171'};">
+                    <strong>Your Answer:</strong> ${userAns || "No answer"}
+                </div>
+                ${!isCorrect ? `<div class="review-ans-row" style="color: #4ade80;"><strong>Correct Answer:</strong> ${q.correct}</div>` : ''}
+                ${q.notes ? `<div class="review-notes"><strong>Notes:</strong> ${q.notes}</div>` : ''}
+            `;
+            container.appendChild(card);
+        }
+    });
+}
+
+function backToScoreScreen() {
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.remove("hidden");
+}
+
+function retakeWrongQuestions(){
+    clearSavedProgress();
+    quizData = JSON.parse(JSON.stringify(wrongQuestions));
+    quizData.forEach(q => delete q.answered);
+
+    wrongQuestions = [];
+    userAnswers = {};
+    categoryStats = {};
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    updateStreakDisplay();
+
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+    
+    saveProgress();
+    loadQuestion();
+}
+
+function reviewBookmarkedQuestions(){
+    clearSavedProgress();
+    quizData = JSON.parse(JSON.stringify(bookmarkedQuestions));
+    quizData.forEach(q => delete q.answered);
+
+    wrongQuestions = [];
+    userAnswers = {};
+    categoryStats = {};
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    updateStreakDisplay();
+
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+    
+    saveProgress();
+    loadQuestion();
+}
+</script>
+
+</body>
+</html>
