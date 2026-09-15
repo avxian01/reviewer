@@ -1,0 +1,2589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COGNITIVE P2</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400;600;700&family=Lexend:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Canvas Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+    --base-font-scale: 100%;
+    --app-font: 'Poppins', sans-serif;
+}
+
+html {
+    font-size: var(--base-font-scale);
+}
+
+* {
+    box-sizing: border-box;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+body {
+    font-family: var(--app-font);
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f8fafc;
+}
+
+/* Glassmorphism Container Card */
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding: 32px;
+    }
+}
+
+/* Top Header Bar */
+.top-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Navigation/Icon Buttons */
+.icon-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.modal-content {
+    background: rgba(30, 27, 75, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #c7d2fe;
+    font-weight: 500;
+}
+
+.toggle-switch-btn {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0 16px;
+    border-radius: 12px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Progress Bar Styling */
+.progress-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    height: 8px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #818cf8 0%, #c084fc 100%);
+    border-radius: 10px;
+    transition: width 0.4s ease-in-out;
+    box-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
+}
+
+/* Quiz Header Bar */
+.quiz-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#bookmarkBtn.bookmarked {
+    background: rgba(245, 158, 11, 0.3);
+    border-color: #f59e0b;
+}
+
+/* Streak Counter Styling */
+.streak-badge {
+    background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+h2 {
+    margin-top: 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    text-align: center;
+}
+
+h3#questionNumber {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #818cf8;
+    margin: 0;
+}
+
+h2#questionText {
+    font-size: 1.15rem;
+    text-align: left;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Action Buttons */
+button {
+    font-family: inherit;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.88rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+button:disabled {
+    cursor: default;
+    opacity: 0.9;
+}
+
+/* Option Items */
+.answer {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.answer:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(129, 140, 248, 0.5);
+}
+
+/* Highlight Colors */
+.correct {
+    background: rgba(59, 130, 246, 0.35) !important;
+    border-color: #60a5fa !important;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
+}
+
+.correct-answer {
+    background: rgba(34, 197, 94, 0.35) !important;
+    border-color: #4ade80 !important;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+.wrong {
+    background: rgba(239, 68, 68, 0.35) !important;
+    border-color: #f87171 !important;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#notesBox {
+    margin-top: 20px;
+    padding: 18px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    border-left: 4px solid #818cf8;
+    line-height: 1.6;
+    white-space: pre-line;
+    font-size: 0.95rem;
+}
+
+/* Pure Note Card Styles */
+.pure-note-card {
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-left: 4px solid #38bdf8;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.pure-note-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.pure-note-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #f8fafc;
+    white-space: pre-line;
+}
+
+#startScreen {
+    text-align: center;
+}
+
+.start-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* --- CUSTOM UI DROPDOWN COMPONENT --- */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 12px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.dropdown-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dropdown-select:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.dropdown-select .arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.custom-dropdown.open .dropdown-select .arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background: #1e1b4b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+.dropdown-list::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.custom-dropdown.open .dropdown-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    color: #ffffff;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-list-item:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.dropdown-list-item:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.dropdown-list-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.dropdown-list-item.selected {
+    background: rgba(99, 102, 241, 0.25);
+    color: #818cf8;
+    font-weight: 600;
+}
+
+.dropdown-list-item .radio-icon {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    position: relative;
+}
+
+.dropdown-list-item.selected .radio-icon {
+    border-color: #818cf8;
+}
+
+.dropdown-list-item.selected .radio-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: #818cf8;
+    border-radius: 50%;
+}
+
+#startScreen button.start-action-btn {
+    width: 100%;
+    margin: 6px 0;
+    padding: 14px;
+    font-size: 0.95rem;
+    background: rgba(99, 102, 241, 0.3);
+    border-color: rgba(129, 140, 248, 0.4);
+}
+
+#startScreen button.start-action-btn:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+#resumeBtn {
+    background: rgba(34, 197, 94, 0.3) !important;
+    border-color: #4ade80 !important;
+    font-weight: 600;
+}
+
+#scoreScreen {
+    text-align: center;
+}
+
+#scoreScreen button {
+    width: 100%;
+    margin: 6px 0;
+    padding: 12px;
+}
+
+.analytics-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 18px 0;
+    text-align: left;
+}
+
+.analytics-card h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    color: #818cf8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.analytics-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+.review-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.review-q-text {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    color: #ffffff;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.review-ans-row {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.review-notes {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid #818cf8;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+.navigation-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.action-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+}
+
+#nextBtn {
+    background: rgba(99, 102, 241, 0.4);
+    border-color: #818cf8;
+}
+
+#nextBtn:hover {
+    background: rgba(99, 102, 241, 0.6);
+}
+
+.watermark {
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 20px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    user-select: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Start Screen / Quiz Mode Panel -->
+    <div id="startScreen">
+        <div class="start-header">
+            <div style="width: 38px;"></div>
+            <h2 style="font-size: 1.8rem; margin: 0;">Quiz Mode</h2>
+            <button type="button" class="icon-btn" onclick="openSettingsModal()" title="Options / Settings">⚙️</button>
+        </div>
+
+        <button type="button" id="resumeBtn" class="start-action-btn hidden" onclick="resumeQuiz()">▶ Resume Progress</button>
+
+        <!-- Category Dropdown -->
+        <div class="custom-dropdown" id="categoryDropdown">
+            <div class="dropdown-select" onclick="toggleDropdown('categoryDropdown')">
+                <span id="selectedCategoryText">All Categories</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="dropdown-list" id="categoryList"></div>
+        </div>
+        <input type="hidden" id="categorySelectValue" value="All">
+
+        <button type="button" class="start-action-btn" onclick="startQuiz(false)">Orderly Questions</button>
+        <button type="button" class="start-action-btn" onclick="startQuiz(true)">Randomized Questions & Answers</button>
+
+        <div class="watermark">@avxianx</div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quizScreen" class="hidden">
+        <div class="top-nav-bar">
+            <button type="button" class="icon-btn" onclick="goHome()" title="Home">
+                <span>🏠</span>
+                <span>Home</span>
+            </button>
+            <span id="streakBadge" class="streak-badge hidden">🔥 0 in a row!</span>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="quiz-header-bar">
+            <div class="header-left">
+                <h3 id="questionNumber"></h3>
+                <button type="button" id="bookmarkBtn" class="icon-btn" onclick="toggleBookmark()" title="Bookmark Question">📍</button>
+            </div>
+        </div>
+
+        <div id="quizContentArea">
+            <h2 id="questionText"></h2>
+            <div id="answers"></div>
+        </div>
+
+        <div class="navigation-btns">
+            <button type="button" id="prevBtn" class="hidden" onclick="prevQuestion()">◄ Back</button>
+            <div class="action-btns">
+                <button type="button" id="notesBtn" class="hidden">Notes</button>
+                <button type="button" id="nextBtn" class="hidden">Next Question ►</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Screen -->
+    <div id="notesScreen" class="hidden">
+        <h2>Notes & Explanation</h2>
+        <div id="notesBox"></div>
+        <br>
+        <button type="button" onclick="backToQuestion()">Back to Quiz</button>
+    </div>
+
+    <!-- Detailed Answers Review Screen -->
+    <div id="detailedReviewScreen" class="hidden">
+        <h2 id="detailedReviewTitle">Detailed Review</h2>
+        <p id="detailedReviewSubtitle" style="text-align: center; color: #c7d2fe; font-size: 0.88rem; margin-bottom: 16px;">Review your answers and detailed notes for each question:</p>
+        
+        <!-- Review Category Dropdown -->
+        <div class="custom-dropdown" id="reviewCategoryDropdown">
+            <div class="dropdown-select" onclick="toggleDropdown('reviewCategoryDropdown')">
+                <span id="selectedReviewCategoryText">All Categories</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="dropdown-list" id="reviewCategoryList"></div>
+        </div>
+        <input type="hidden" id="reviewCategoryFilterValue" value="All">
+
+        <div id="detailedReviewContainer" style="max-height: 60vh; overflow-y: auto; padding-right: 6px;"></div>
+
+        <button type="button" onclick="backToScoreScreen()" style="width: 100%; margin-top: 16px; background: rgba(99, 102, 241, 0.4); border-color: #818cf8;">Back to Results Screen</button>
+    </div>
+
+    <!-- Score / Results Screen -->
+    <div id="scoreScreen" class="hidden">
+        <h2 id="scoreHeaderTitle">Quiz Finished!</h2>
+        <h3 id="scoreText" style="font-size: 1.5rem; color: #818cf8; margin: 15px 0;"></h3>
+
+        <div id="analyticsCard" class="analytics-card">
+            <h4>Performance Breakdown</h4>
+            <div id="analyticsList"></div>
+        </div>
+
+        <button type="button" id="reviewAllAnswersBtn" onclick="showDetailedReview('answers')" style="background: rgba(99, 102, 241, 0.35); border-color: #818cf8; font-weight: 600;">Review All Answers</button>
+        <button type="button" id="reviewAllNotesBtn" onclick="showDetailedReview('notes')" style="background: rgba(14, 165, 233, 0.35); border-color: #38bdf8; font-weight: 600;">Review All Notes</button>
+        <button type="button" id="retakeAllBtn" onclick="restartQuiz()">Retake All Questions</button>
+        <button type="button" id="retakeWrongBtn" class="hidden" onclick="retakeWrongQuestions()">Retake Wrong Only</button>
+        <button type="button" id="reviewBookmarkedBtn" class="hidden" onclick="reviewBookmarkedQuestions()">Review Bookmarked</button>
+        <button type="button" onclick="goHome()" style="background: rgba(255, 255, 255, 0.08); margin-top: 10px;">🏠 Back to Home</button>
+    </div>
+
+</div>
+
+<!-- Options / Settings Modal -->
+<div id="settingsModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>⚙️ Quiz Options</h3>
+        </div>
+        
+        <div class="setting-group">
+            <label>Font Size:</label>
+            <div class="custom-dropdown" id="fontSizeDropdown">
+                <div class="dropdown-select" onclick="toggleDropdown('fontSizeDropdown')">
+                    <span id="selectedFontSizeText">Normal</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list">
+                    <div class="dropdown-list-item" onclick="selectFontSize('85%', 'Small', this)"><span>Small</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item selected" onclick="selectFontSize('100%', 'Normal', this)"><span>Normal</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontSize('115%', 'Large', this)"><span>Large</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontSize('130%', 'Extra Large', this)"><span>Extra Large</span><div class="radio-icon"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <label>Font Style:</label>
+            <div class="custom-dropdown" id="fontFamilyDropdown">
+                <div class="dropdown-select" onclick="toggleDropdown('fontFamilyDropdown')">
+                    <span id="selectedFontFamilyText">Poppins</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list">
+                    <div class="dropdown-list-item selected" onclick="selectFontFamily('\'Poppins\', sans-serif', 'Poppins', this)"><span>Poppins</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Inter\', sans-serif', 'Inter', this)"><span>Inter</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Roboto\', sans-serif', 'Roboto', this)"><span>Roboto</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Montserrat\', sans-serif', 'Montserrat', this)"><span>Montserrat</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Open Sans\', sans-serif', 'Open Sans', this)"><span>Open Sans</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Lexend\', sans-serif', 'Lexend', this)"><span>Lexend</span><div class="radio-icon"></div></div>
+                    <div class="dropdown-list-item" onclick="selectFontFamily('\'Courier Prime\', monospace', 'Monospace (Courier)', this)"><span>Monospace (Courier)</span><div class="radio-icon"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <label>Sound Effects:</label>
+            <button type="button" id="soundToggleModalBtn" class="toggle-switch-btn" onclick="toggleSound()">
+                <span>Sound Effects</span>
+                <span id="soundStatusText">ON 🔊</span>
+            </button>
+        </div>
+
+        <button type="button" onclick="closeSettingsModal()" style="width: 100%; margin-top: 8px; background: rgba(129, 140, 248, 0.4); border-color: #818cf8;">Close Options</button>
+    </div>
+</div>
+
+<script>
+let questions = [
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The mental processes involved in retaining, retrieving, and using information about stimuli, images, events, ideas, and skills after the original information is no longer present.",
+    answers: ["Storage", "Memory", "Encoding", "Retrieval"],
+    correct: "Memory",
+    notes: "Main Points / Key Words: Retaining, retrieving, and using information / connecting past to present.\n\nExplanation: Your brain's ability to hold onto past experiences so you can use them right now and guide what you do next.\n\nExample: Remembering how to solve a math problem you learned last week during today's exam."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The process of transforming sensory data into a usable mental representation.",
+    answers: ["Storage", "Retrieval", "Encoding", "Recall"],
+    correct: "Encoding",
+    notes: "Main Points / Key Words: Transforming sensory data / usable mental representation.\n\nExplanation: Taking what you see, hear, or feel and turning it into a mental format your storage can hold.\n\nExample: Converting the sound of someone speaking a phone number into numbers written in your mind."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Maintaining encoded information over time, either briefly or permanently.",
+    answers: ["Encoding", "Retrieval", "Primary memory", "Storage"],
+    correct: "Storage",
+    notes: "Main Points / Key Words: Maintaining encoded information / temporary or permanent.\n\nExplanation: Holding onto information so it doesn't immediately disappear, whether for a few seconds or a lifetime.\n\nExample: Keeping a friend's address saved in your mind long enough to write it down."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Accessing or bringing back stored information when needed for use in thinking or behavior.",
+    answers: ["Retrieval", "Encoding", "Storage", "Recognition"],
+    correct: "Retrieval",
+    notes: "Main Points / Key Words: Accessing or bringing back / stored information.\n\nExplanation: Reaching into your mental storage to pull out a specific fact or past event.\n\nExample: Recalling your password when logging into your online student portal."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A retrieval process that requires producing information from storage without cues, involving expressive knowledge.",
+    answers: ["Cued recall", "Recognition", "Recall", "Serial recall"],
+    correct: "Recall",
+    notes: "Main Points / Key Words: Producing information without cues / expressive knowledge.\n\nExplanation: Pulling the correct answer straight out of your head without any options given on the page.\n\nExample: Answering an essay question or fill-in-the-blank prompt on an exam."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Remembering items in the exact order presented.",
+    answers: ["Free recall", "Serial recall", "Cued recall", "Recognition"],
+    correct: "Serial recall",
+    notes: "Main Points / Key Words: Remembering items / exact presented order.\n\nExplanation: Remembering a set of steps or words in order, without mixing up the sequence.\n\nExample: Recalling a 7-digit phone number in the correct numerical order."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Recalling items in any order without restriction.",
+    answers: ["Serial recall", "Cued recall", "Free recall", "Relearning"],
+    correct: "Free recall",
+    notes: "Main Points / Key Words: Recalling items / any order.\n\nExplanation: Listing as many items from a group as you can remember without caring about their order.\n\nExample: Writing down a list of grocery items you saw earlier in any random order you remember."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Retrieving items after being given partial prompts or hints.",
+    answers: ["Free recall", "Cued recall", "Recognition", "Serial recall"],
+    correct: "Cued recall",
+    notes: "Main Points / Key Words: Retrieving items / partial cues provided.\n\nExplanation: Using a piece of related information to help trigger the full entry.\n\nExample: Given the paired cue \"Cat - _\", remembering the word \"Dog\"."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Identifying previously encountered information, which involves receptive knowledge.",
+    answers: ["Recall", "Recognition", "Relearning", "Explicit memory"],
+    correct: "Recognition",
+    notes: "Main Points / Key Words: Identifying previously encountered information / receptive knowledge.\n\nExplanation: Deciding if something you see matches an entry you already have stored.\n\nExample: Selecting the correct answer from four choices on a multiple-choice exam."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A memory measure focusing on how quickly previously learned material can be learned again.",
+    answers: ["Relearning", "Recognition", "Implicit memory", "Chunking"],
+    correct: "Relearning",
+    notes: "Main Points / Key Words: Speed of learning material again / savings measure.\n\nExplanation: Learning something a second time takes far less effort because traces of the old entry remain.\n\nExample: Reviewing a foreign language vocabulary chapter in 10 minutes that originally took 2 hours to learn."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Memory that involves conscious recollection and intentional recall of facts or past experiences.",
+    answers: ["Implicit memory", "Secondary memory", "Explicit memory", "Semantic memory"],
+    correct: "Explicit memory",
+    notes: "Main Points / Key Words: Conscious recollection / intentional recall of facts.\n\nExplanation: Information you actively try to pull up and can describe out loud.\n\nExample: Recalling the date of an important historical event during a quiz."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Information use without conscious awareness, often revealed through motor skills, habits, or priming.",
+    answers: ["Explicit memory", "Implicit memory", "Episodic memory", "Primary memory"],
+    correct: "Implicit memory",
+    notes: "Main Points / Key Words: Unconscious awareness / motor skills and habits.\n\nExplanation: Doing tasks or responding to prompts automatically using skills stored in your brain.\n\nExample: Riding a bike or performing mirror-tracing tasks."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "An early theoretical view describing temporary storage for information currently in active use.",
+    answers: ["Primary memory", "Secondary memory", "Sensory store", "Permastore"],
+    correct: "Primary memory",
+    notes: "Main Points / Key Words: Early view / temporary holding space.\n\nExplanation: The mental space holding what you are actively thinking about right now.\n\nExample: Holding a room number in your head while walking down a hallway."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "An early theoretical view describing long-term storage for information over extended periods.",
+    answers: ["Primary memory", "Short-Term Memory (STM)", "Secondary memory", "Sensory store"],
+    correct: "Secondary memory",
+    notes: "Main Points / Key Words: Early view / long-term storage.\n\nExplanation: The permanent storehouse for concepts you aren't currently using.\n\nExample: Remembering your childhood home address."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A classic memory model proposed with three components: Sensory store, Short-term store, and Long-term store.",
+    answers: ["Multi-store model", "Working memory model", "Baddeley's model", "Atkinson-Shiffrin network"],
+    correct: "Multi-store model",
+    notes: "Main Points / Key Words: Three components / Sensory, Short-term, Long-term.\n\nExplanation: The classic theory that concepts travel through three separate stages from initial perception to long-term storage.\n\nExample: Seeing a flashing sign (Sensory), reading the text (Short-Term), and remembering the brand name days later (Long-Term)."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The initial stage of memory that briefly holds raw sensory input before it fades.",
+    answers: ["Short-Term Memory (STM)", "Sensory store (Sensory memory)", "Phonological store", "Primary memory"],
+    correct: "Sensory store (Sensory memory)",
+    notes: "Main Points / Key Words: Initial stage / brief holding of raw sensory input.\n\nExplanation: A momentary snapshot of sight or sound captured by your senses before it fades away.\n\nExample: Visualizing the brief trail of light left behind by a moving sparkler in the dark."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A temporary holding area with a limited capacity of 7 ± 2 items that acts as a gateway to long-term storage.",
+    answers: ["Long-Term Memory (LTM)", "Sensory store", "Short-Term Memory (STM)", "Permastore"],
+    correct: "Short-Term Memory (STM)",
+    notes: "Main Points / Key Words: Brief duration / limited capacity (7±2 items).\n\nExplanation: The temporary holding area for small bits of active information before they fade or move into permanent storage.\n\nExample: Holding a temporary verification code in your mind just long enough to type it into a website."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The process of breaking down large amounts of information into smaller, more manageable groups to increase retention.",
+    answers: ["Chunking", "Within-item elaboration", "Between-item elaboration", "Articulatory suppression"],
+    correct: "Chunking",
+    notes: "Main Points / Key Words: Breaking down information / smaller manageable groups.\n\nExplanation: Grouping single numbers or letters together so your active capacity can hold more at once.\n\nExample: Grouping 0-9-1-7-1-2-3-4-5-6-7 as 0917-123-4567 to make it easier to remember."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The primary memory storage system with an essentially unlimited capacity and indefinite duration.",
+    answers: ["Short-Term Memory (STM)", "Visuospatial Sketchpad", "Long-Term Memory (LTM)", "Sensory store"],
+    correct: "Long-Term Memory (LTM)",
+    notes: "Main Points / Key Words: Vast capacity / indefinite storage.\n\nExplanation: The brain's main storage system where information is kept safely for days, years, or a lifetime.\n\nExample: Remembering classmates' names and faces even after decades."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A concept suggesting that certain deeply ingrained types of knowledge remain extremely stable for a lifetime.",
+    answers: ["Long-Term Memory (LTM)", "Permastore", "Episodic Buffer", "Secondary memory"],
+    correct: "Permastore",
+    notes: "Main Points / Key Words: Extremely stable storage / lifelong retention.\n\nExplanation: Deeply ingrained information that becomes virtually immune to forgetting over decades.\n\nExample: Automatically remembering how to speak your native language or perform basic addition even in old age."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The phenomenon where recall improves dramatically when new information is related directly to oneself.",
+    answers: ["Self-reference effect", "Between-item elaboration", "Within-item elaboration", "Subvocal rehearsal"],
+    correct: "Self-reference effect",
+    notes: "Main Points / Key Words: Related to oneself / rich encoding via self-schema.\n\nExplanation: Remembering new facts easily when you connect them directly to your own personal experiences.\n\nExample: Remembering a psychological term because you relate it to a specific moment from your own childhood."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "An encoding strategy that focuses closely on the unique characteristics and details of a single item.",
+    answers: ["Between-item elaboration", "Within-item elaboration", "Chunking", "Self-reference effect"],
+    correct: "Within-item elaboration",
+    notes: "Main Points / Key Words: Specific features / single item focus.\n\nExplanation: Analyzing the unique characteristics of one specific concept to fix it in mind.\n\nExample: Focusing closely on the specific sound and spelling pattern of a single new foreign vocabulary word."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "An encoding strategy that links new incoming items to existing knowledge already stored in memory.",
+    answers: ["Within-item elaboration", "Subvocal rehearsal", "Between-item elaboration", "Chunking"],
+    correct: "Between-item elaboration",
+    notes: "Main Points / Key Words: Connections / link to existing knowledge.\n\nExplanation: Connecting a new piece of information to concepts you already understand well.\n\nExample: Connecting a new concept in psychology to a topic you studied in sociology last semester."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A core component of working memory that temporarily holds visual and spatial information.",
+    answers: ["Phonological Loop", "Visuospatial Sketchpad", "Episodic Buffer", "Central Executive"],
+    correct: "Visuospatial Sketchpad",
+    notes: "Main Points / Key Words: Temporary hold / visual and spatial information.\n\nExplanation: The part of active mental processing that handles shapes, images, and physical locations.\n\nExample: Picturing how furniture will fit inside a room before moving it."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A core component of working memory that holds inner speech for comprehension and verbal rehearsal.",
+    answers: ["Visuospatial Sketchpad", "Phonological Loop", "Central Executive", "Phonological store"],
+    correct: "Phonological Loop",
+    notes: "Main Points / Key Words: Inner speech / comprehension and rehearsal.\n\nExplanation: The internal voice system that processes speech sounds and lets you repeat words to yourself.\n\nExample: Silently repeating a phone number over and over in your head while searching for a pen."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A sub-component of the phonological loop that provides temporary storage for speech-based sounds (the 'inner ear').",
+    answers: ["Phonological store", "Subvocal rehearsal", "Articulatory suppression", "Episodic Buffer"],
+    correct: "Phonological store",
+    notes: "Main Points / Key Words: Speech perception / temporary auditory storage.\n\nExplanation: The \"inner ear\" that briefly holds spoken words or speech sounds.\n\nExample: Retaining the sound of someone's name for a few seconds right after they introduce themselves."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The sub-component process of the phonological loop involving repeating information silently to maintain it in active memory.",
+    answers: ["Phonological store", "Articulatory suppression", "Subvocal rehearsal", "Chunking"],
+    correct: "Subvocal rehearsal",
+    notes: "Main Points / Key Words: Inner voice / repeating silently.\n\nExplanation: The \"inner voice\" that loops spoken words in your mind so they don't fade away.\n\nExample: Continuously repeating a password mentally while navigating to a sign-in screen."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The phenomenon that occurs when verbal rehearsal is blocked, leading to reduced storage capacity.",
+    answers: ["Articulatory suppression", "Subvocal rehearsal", "Retrograde amnesia", "Working memory depletion"],
+    correct: "Articulatory suppression",
+    notes: "Main Points / Key Words: Rehearsal blocked / reduced storage capacity.\n\nExplanation: Disruption that happens when repeating an irrelevant word prevents you from rehearsing target information.\n\nExample: Trying to remember a phone number while repeatedly saying \"the, the, the\" out loud."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The core component of working memory that directs attention and coordinates activities across mental systems.",
+    answers: ["Central Executive", "Episodic Buffer", "Phonological Loop", "Visuospatial Sketchpad"],
+    correct: "Central Executive",
+    notes: "Main Points / Key Words: Controls attention / coordinates activities.\n\nExplanation: The main controller of active focus that decides what to pay attention to and switches between tasks.\n\nExample: Deciding to ignore background music so you can concentrate on reading a difficult textbook chapter."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A core component of working memory that integrates information from visual, verbal, and long-term sources into meaningful episodes.",
+    answers: ["Central Executive", "Visuospatial Sketchpad", "Episodic Buffer", "Permastore"],
+    correct: "Episodic Buffer",
+    notes: "Main Points / Key Words: Integration / meaningful episodes.\n\nExplanation: The component that combines visual images, sounds, and background knowledge into a unified scene.\n\nExample: Combining the visual sight of a scene, spoken dialogue, and prior story knowledge while watching a movie."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A form of explicit memory holding objective facts, concepts, and general world knowledge not tied to a personal time or place.",
+    answers: ["Episodic Memory", "Semantic Memory", "Implicit memory", "Permastore"],
+    correct: "Semantic Memory",
+    notes: "Main Points / Key Words: General knowledge / facts and concepts.\n\nExplanation: Storehouse for objective facts about the world that aren't tied to a specific personal time or place.\n\nExample: Knowing that Paris is the capital of France or that water is made of hydrogen and oxygen."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A form of explicit memory holding personal experiences and autobiographical events tied to a specific time and place.",
+    answers: ["Semantic Memory", "Implicit memory", "Episodic Memory", "Primary memory"],
+    correct: "Episodic Memory",
+    notes: "Main Points / Key Words: Personal experiences / tied to time and place.\n\nExplanation: Storehouse for personal events you experienced at a specific moment in your life.\n\nExample: Recalling what you ate for breakfast this morning or your first day of high school."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "Individuals who use specialized strategies like visualization and association to achieve exceptional memory performance.",
+    answers: ["Mnemonists", "Psychometrists", "Central Executives", "Researchers"],
+    correct: "Mnemonists",
+    notes: "Main Points / Key Words: Exceptional performance / specialized strategies.\n\nExplanation: People who train their minds using specific encoding tricks to recall huge amounts of data.\n\nExample: A mental competitor using the method of loci to memorize the exact order of a shuffled deck of cards."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The loss of past memories and events that occurred prior to physical trauma or brain injury.",
+    answers: ["Anterograde amnesia", "Retrograde amnesia", "Infantile amnesia", "Validity shrinkage"],
+    correct: "Retrograde amnesia",
+    notes: "Main Points / Key Words: Past events lost / prior to trauma.\n\nExplanation: Inability to recall events or information that happened before a brain injury occurred.\n\nExample: Forgetting the events of the week leading up to a car accident after suffering a concussion."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The inability to form new long-term memories after experiencing brain trauma or injury.",
+    answers: ["Retrograde amnesia", "Infantile amnesia", "Anterograde amnesia", "Articulatory suppression"],
+    correct: "Anterograde amnesia",
+    notes: "Main Points / Key Words: New memories blocked / after trauma.\n\nExplanation: Being unable to create lasting long-term records for anything that happens after a brain injury.\n\nExample: Meeting a new doctor every day without ever remembering having met them before."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "The normal developmental inability of most individuals to recall very early life events from infancy.",
+    answers: ["Anterograde amnesia", "Infantile amnesia", "Retrograde amnesia", "Scoring drift"],
+    correct: "Infantile amnesia",
+    notes: "Main Points / Key Words: Early life events / normal developmental inability.\n\nExplanation: The common inability most people have to recall personal events from the first few years of infancy.\n\nExample: Being unable to recall anything that happened on your 1st birthday."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 9 & 10",
+    question: "A progressive neurodegenerative disorder causing dementia and memory impairment, characterized biologically by brain plaques and tangles.",
+    answers: ["Alzheimer's Disease", "Anterograde amnesia", "Retrograde amnesia", "Working memory depletion"],
+    correct: "Alzheimer's Disease",
+    notes: "Main Points / Key Words: Progressive neurodegenerative disorder / plaques and tangles.\n\nExplanation: A brain disease that gradually destroys cognitive function, starting with episodic recall and eventually affecting daily life.\n\nExample: An older adult initially struggling to remember recent conversations who gradually loses the ability to recognize familiar surroundings."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Transforming sensory input into a memory format.",
+    answers: ["Retrieval", "Storage", "Encoding", "Consolidation"],
+    correct: "Encoding",
+    notes: "Main Points / Key Words: Transforming sensory input / memory format.\n\nExplanation: Changing raw sensory information into a usable form that the brain can process and store.\n\nExample: Converting spoken words into mental sounds."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Retaining encoded information over time.",
+    answers: ["Storage", "Retrieval", "Encoding", "Availability"],
+    correct: "Storage",
+    notes: "Main Points / Key Words: Retaining encoded info / over time.\n\nExplanation: Holding and preserving information in your mind until it is needed.\n\nExample: Holding a phone number in mind long enough to dial it."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Accessing stored memory when needed.",
+    answers: ["Storage", "Accessibility", "Consolidation", "Retrieval"],
+    correct: "Retrieval",
+    notes: "Main Points / Key Words: Accessing stored memory / when needed.\n\nExplanation: Pulling out previously saved information so you can use it.\n\nExample: Recalling a friend's birthday during a conversation."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Memory system that relies mostly on sound-based processing.",
+    answers: ["Long-Term Memory (Semantic Encoding)", "Short-Term Memory (Acoustic Encoding)", "State-Dependent Memory", "Autobiographical Memory"],
+    correct: "Short-Term Memory (Acoustic Encoding)",
+    notes: "Main Points / Key Words: Relies mostly / sound-based processing.\n\nExplanation: Encoding temporary information primarily by how it sounds.\n\nExample: Confusing letters that sound alike, like mistaking \"B\" for \"V\"."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Memory system that relies mostly on word meanings and concepts.",
+    answers: ["Short-Term Memory (Acoustic Encoding)", "Constructive Memory", "Long-Term Memory (Semantic Encoding)", "Flashbulb Memory"],
+    correct: "Long-Term Memory (Semantic Encoding)",
+    notes: "Main Points / Key Words: Relies mostly / word meanings and concepts.\n\nExplanation: Processing and storing permanent information based on the deeper meaning of words or ideas.\n\nExample: Grouping items by category, such as clustering animals together during recall."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Occurs when stored information gets disrupted by competing data.",
+    answers: ["Decay", "Interference", "Transience", "Blocking"],
+    correct: "Interference",
+    notes: "Main Points / Key Words: Stored info disrupted / competing data.\n\nExplanation: When different pieces of information conflict with one another, causing forgetting or confusion.\n\nExample: Forgetting an old password after learning a new one."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "The phenomenon where memory traces naturally fade over time.",
+    answers: ["Transience", "Interference", "Decay", "Absent-mindedness"],
+    correct: "Decay",
+    notes: "Main Points / Key Words: Memory traces / naturally fade over time.\n\nExplanation: The spontaneous fading of stored information simply due to the passage of time.\n\nExample: Forgetting a classmate's name years after graduation."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Integrating new info into long-term storage.",
+    answers: ["Encoding", "Elaborative Rehearsal", "Consolidation", "Storage"],
+    correct: "Consolidation",
+    notes: "Main Points / Key Words: Integrating new info / long-term storage.\n\nExplanation: Stabilizing and solidifying a new memory trace after initial learning.\n\nExample: Linking new historical facts to events you already know."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Repetitive recitation without added meaning.",
+    answers: ["Elaborative Rehearsal", "Maintenance Rehearsal", "Massed Practice", "Categorical Clustering"],
+    correct: "Maintenance Rehearsal",
+    notes: "Main Points / Key Words: Repetitive recitation / without added meaning.\n\nExplanation: Repeating information continuously to keep it active in short-term memory without making connections.\n\nExample: Repeating a phone number silently over and over."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Connecting information to existing knowledge to deepen meaning.",
+    answers: ["Maintenance Rehearsal", "Distributed Practice", "Elaborative Rehearsal", "Consolidation"],
+    correct: "Elaborative Rehearsal",
+    notes: "Main Points / Key Words: Connecting info / existing knowledge / deepen meaning.\n\nExplanation: Linking new material to what you already know to store it more securely in long-term memory.\n\nExample: Remembering a date by associating it with a family birthday."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Spacing study sessions out over time for better long-term retention.",
+    answers: ["Massed Practice", "Distributed Practice (Spacing Effect)", "Elaborative Rehearsal", "Serial Processing"],
+    correct: "Distributed Practice (Spacing Effect)",
+    notes: "Main Points / Key Words: Spacing study sessions out / better long-term retention.\n\nExplanation: Learning material across multiple short sessions spread over days or weeks.\n\nExample: Studying 30 minutes daily for a week instead of cramming."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Cramming information into one brief session.",
+    answers: ["Distributed Practice (Spacing Effect)", "Maintenance Rehearsal", "Massed Practice", "Persistence"],
+    correct: "Massed Practice",
+    notes: "Main Points / Key Words: Cramming info / one brief session.\n\nExplanation: Trying to learn a huge volume of material in a single, intense session right before needing it.\n\nExample: Pulling an all-nighter right before an exam."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Grouping items by shared categories to enhance memory.",
+    answers: ["Categorical Clustering", "Pegword System", "Method of Loci", "Interactive Images"],
+    correct: "Categorical Clustering",
+    notes: "Main Points / Key Words: Grouping items / shared categories.\n\nExplanation: Organizing a list into meaningful groups based on common traits.\n\nExample: Sorting a grocery list into fruits, dairy, and snacks."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Linking items together using vivid imagery.",
+    answers: ["Keyword System", "Interactive Images", "Method of Loci", "Pegword System"],
+    correct: "Interactive Images",
+    notes: "Main Points / Key Words: Linking items together / vivid imagery.\n\nExplanation: Mentally picturing items interacting with each other to form a memorable mental picture.\n\nExample: Picturing an apple wearing a top hat to remember \"apple\" and \"hat\"."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Linking items to a pre-memorized list of words.",
+    answers: ["Method of Loci", "Acrostics", "Pegword System", "Acronyms"],
+    correct: "Pegword System",
+    notes: "Main Points / Key Words: Linking items / pre-memorized list of words.\n\nExplanation: Associating new information with a set of ordered, pre-learned anchor words.\n\nExample: Pairing \"one-sun\" with a specific word on your list."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Visualizing items along a familiar physical path.",
+    answers: ["Interactive Images", "Method of Loci", "Keyword System", "Categorical Clustering"],
+    correct: "Method of Loci",
+    notes: "Main Points / Key Words: Visualizing items / familiar physical path.\n\nExplanation: Placing mental images of items at specific landmarks along a well-known route.\n\nExample: Imagining items placed at landmarks along your walk home."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Creating a single word using the first letters of items.",
+    answers: ["Acrostics", "Acronyms", "Keyword System", "Pegword System"],
+    correct: "Acronyms",
+    notes: "Main Points / Key Words: Single word / first letters of items.\n\nExplanation: Forming a new pronounceable word out of the initial letters of terms you need to remember.\n\nExample: Using PEMDAS for math order of operations."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Writing a full sentence using initial letters as cues.",
+    answers: ["Acronyms", "Acrostics", "Keyword System", "Interactive Images"],
+    correct: "Acrostics",
+    notes: "Main Points / Key Words: Full sentence / initial letters as cues.\n\nExplanation: Creating a verse or phrase where each word's starting letter stands for an item on a list.\n\nExample: \"Every Good Boy Does Fine\" for musical notes."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Linking a foreign word's sound to a familiar word image.",
+    answers: ["Pegword System", "Method of Loci", "Keyword System", "Categorical Clustering"],
+    correct: "Keyword System",
+    notes: "Main Points / Key Words: Foreign word's sound / familiar word image.\n\nExplanation: Remembering foreign vocabulary by connecting how it sounds to a familiar visual image.\n\nExample: Remembering the Spanish word pato (duck) by imagining a duck wearing a pot."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Accessing multiple pieces of memory at the exact same time.",
+    answers: ["Serial Processing", "Parallel Processing", "Exhaustive Serial Processing", "Self-Terminating Serial Processing"],
+    correct: "Parallel Processing",
+    notes: "Main Points / Key Words: Accessing multiple pieces / exact same time.\n\nExplanation: Processing various streams of information simultaneously.\n\nExample: Processing a face's eyes, nose, and mouth simultaneously."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Checking memory items one after another in order.",
+    answers: ["Parallel Processing", "Serial Processing", "Exhaustive Serial Processing", "Self-Terminating Serial Processing"],
+    correct: "Serial Processing",
+    notes: "Main Points / Key Words: Checking memory items / one after another in order.\n\nExplanation: Searching through information step-by-step in a continuous sequence.\n\nExample: Reading through a list item-by-item to find a specific word."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Checking every item on a list, even after finding the match.",
+    answers: ["Self-Terminating Serial Processing", "Exhaustive Serial Processing", "Parallel Processing", "Serial Processing"],
+    correct: "Exhaustive Serial Processing",
+    notes: "Main Points / Key Words: Checking every item / even after finding match.\n\nExplanation: Continuing a sequence search all the way to the end of a set regardless of when the target item is located.\n\nExample: Scanning an entire attendance sheet even after spotting your name."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Stopping the search through memory items immediately once the target item is found.",
+    answers: ["Exhaustive Serial Processing", "Self-Terminating Serial Processing", "Serial Processing", "Parallel Processing"],
+    correct: "Self-Terminating Serial Processing",
+    notes: "Main Points / Key Words: Stopping search immediately / item is found.\n\nExplanation: Terminating a step-by-step search as soon as the desired target is located.\n\nExample: Stopping your search through a keyring as soon as you find the right key."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Refers to whether information actually exists within long-term memory.",
+    answers: ["Accessibility", "Availability", "Consolidation", "Retrieval"],
+    correct: "Availability",
+    notes: "Main Points / Key Words: Whether information exists / long-term memory.\n\nExplanation: Refers to whether data has actually been encoded and stored in memory or not.\n\nExample: Having a stored memory of an event from childhood."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Refers to how easily you can pull out and retrieve a stored memory.",
+    answers: ["Availability", "Accessibility", "Retrieval", "Consolidation"],
+    correct: "Accessibility",
+    notes: "Main Points / Key Words: How easily / pull out and retrieve.\n\nExplanation: How readily you can access stored information when you actually try to recall it.\n\nExample: Having a word on the \"tip of your tongue\" (it is available, but currently inaccessible)."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Occurs when newly learned material impairs the recall of older information.",
+    answers: ["Proactive Interference", "Retroactive Interference", "Decay Theory", "Blocking"],
+    correct: "Retroactive Interference",
+    notes: "Main Points / Key Words: Newly learned material / impairs recall of older info.\n\nExplanation: When new information interferes with your ability to remember previously learned information.\n\nExample: Forgetting your old phone number after memorizing your new one."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Occurs when previously learned material impairs the learning or recall of new information.",
+    answers: ["Retroactive Interference", "Proactive Interference", "Transience", "Misattribution"],
+    correct: "Proactive Interference",
+    notes: "Main Points / Key Words: Previously learned material / impairs learning/recall of new info.\n\nExplanation: When old information blocks or disrupts your ability to learn or recall fresh material.\n\nExample: Accidentally writing the previous year on a document in January."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Superior recall of items positioned at or near the end of a list.",
+    answers: ["Primacy Effect", "Recency Effect", "Context Effects", "State-Dependent Memory"],
+    correct: "Recency Effect",
+    notes: "Main Points / Key Words: Superior recall / end of a list.\n\nExplanation: The tendency to easily remember the final items presented in a sequence.\n\nExample: Remembering the last couple of items your friend asked you to pick up at the store."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Superior recall of items positioned at or near the beginning of a list.",
+    answers: ["Recency Effect", "Primacy Effect", "Context Effects", "Availability"],
+    correct: "Primacy Effect",
+    notes: "Main Points / Key Words: Superior recall / beginning of a list.\n\nExplanation: The tendency to easily remember the very first items presented in a sequence.\n\nExample: Recalling the first few vocabulary words on a long vocabulary sheet."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "The theory that information is forgotten due to the gradual fading or disappearance of its memory trace over time.",
+    answers: ["Decay Theory", "Retroactive Interference", "Proactive Interference", "Transience"],
+    correct: "Decay Theory",
+    notes: "Main Points / Key Words: Forgotten due to gradual fading / memory trace over time.\n\nExplanation: The theory that forgetting occurs automatically as physical memory traces deteriorate over time.\n\nExample: Forgetting the name of a distant childhood acquaintance after years of no contact."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Memory retrieval process that involves rebuilding original experiences using inferences, cues, and prior knowledge.",
+    answers: ["Autobiographical Memory", "Constructive Memory", "Flashbulb Memory", "State-Dependent Memory"],
+    correct: "Constructive Memory",
+    notes: "Main Points / Key Words: Rebuilding original experiences / inferences, cues, prior knowledge.\n\nExplanation: Piecing together past events by combining actual traces with expectations and general knowledge rather than replaying an exact recording.\n\nExample: Recalling a birthday party and \"remembering\" a cake was there simply because parties usually have cake."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Memory for one's own personal life history.",
+    answers: ["Flashbulb Memory", "Constructive Memory", "Autobiographical Memory", "State-Dependent Memory"],
+    correct: "Autobiographical Memory",
+    notes: "Main Points / Key Words: Memory for one's own / personal life history.\n\nExplanation: Stored recollections of personal experiences, events, and individual life history.\n\nExample: Remembering the day you passed your driving test."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "A vivid, detailed memory of an emotional or surprising event.",
+    answers: ["Autobiographical Memory", "Flashbulb Memory", "Constructive Memory", "State-Dependent Memory"],
+    correct: "Flashbulb Memory",
+    notes: "Main Points / Key Words: Vivid, detailed memory / emotional or surprising event.\n\nExplanation: Exceptionally vivid and clear memories associated with highly shocking or significant events.\n\nExample: Vividly remembering exactly where you were and what you were doing when hearing about a major disaster."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Memory failure where memory simply fades quickly over time.",
+    answers: ["Absent-mindedness", "Blocking", "Transience", "Misattribution"],
+    correct: "Transience",
+    notes: "Main Points / Key Words: Memory simply fades / quickly over time.\n\nExplanation: The tendency for memories to weaken or fade over the passage of time.\n\nExample: Forgetting what you ate for lunch three Tuesdays ago."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Lapses in attention that lead to memory failure.",
+    answers: ["Transience", "Absent-mindedness", "Blocking", "Suggestibility"],
+    correct: "Absent-mindedness",
+    notes: "Main Points / Key Words: Lapses in attention / memory failure.\n\nExplanation: Forgetting details or commitments because your attention was focused elsewhere during encoding or retrieval.\n\nExample: Walking into a room to grab something, then immediately forgetting what you came for."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Temporarily being unable to access stored information.",
+    answers: ["Absent-mindedness", "Blocking", "Misattribution", "Persistence"],
+    correct: "Blocking",
+    notes: "Main Points / Key Words: Temporarily unable / access stored info.\n\nExplanation: A temporary inability to retrieve information that is stored in memory.\n\nExample: Experiencing the \"tip-of-the-tongue\" phenomenon when trying to remember an actor's name."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Confusing the source or context of a recalled memory.",
+    answers: ["Suggestibility", "Misattribution", "Bias", "Blocking"],
+    correct: "Misattribution",
+    notes: "Main Points / Key Words: Confusing the source / context of recalled memory.\n\nExplanation: Correctly remembering an item or fact but assigning it to the wrong source or origin.\n\nExample: Attributing a story you read in an article to a friend who talked to you."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Memories altered due to deliberate or accidental leading suggestions.",
+    answers: ["Misattribution", "Bias", "Suggestibility", "Persistence"],
+    correct: "Suggestibility",
+    notes: "Main Points / Key Words: Memories altered / leading suggestions.\n\nExplanation: Modifying or distorting personal recollections because of misleading cues or prompts provided by others.\n\nExample: Believing you saw a specific detail at a crime scene after a police officer explicitly mentions it."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Present knowledge, beliefs, or feelings distorting how past events are recalled.",
+    answers: ["Suggestibility", "Bias", "Misattribution", "Transience"],
+    correct: "Bias",
+    notes: "Main Points / Key Words: Present knowledge/beliefs/feelings / distort past events.\n\nExplanation: Allowing your current mood, opinions, or state of mind to alter how you remember past experiences.\n\nExample: Recalling a past relationship as purely negative after going through a bad breakup."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Unwanted, persistent memories continuously intruding on thoughts.",
+    answers: ["Blocking", "Absent-mindedness", "Persistence", "Bias"],
+    correct: "Persistence",
+    notes: "Main Points / Key Words: Unwanted memories / continuously intruding.\n\nExplanation: The inability to prevent disturbing or distressing memories from repeatedly coming to mind.\n\nExample: Continually replaying an embarrassing public speaking mistake in your head."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Phenomenon where physical environment cues present during encoding improve retrieval when present during recall.",
+    answers: ["State-Dependent Memory", "Context Effects", "Constructive Memory", "Primacy Effect"],
+    correct: "Context Effects",
+    notes: "Main Points / Key Words: Physical environment cues / improve retrieval.\n\nExplanation: Memory retrieval is stronger when you are in the exact same environment where you originally learned the material.\n\nExample: Performing better on an exam taken in the same classroom where lectures were held."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 11-12",
+    question: "Phenomenon where internal states (mood or physiological condition) serve as retrieval context.",
+    answers: ["Context Effects", "State-Dependent Memory", "Flashbulb Memory", "Autobiographical Memory"],
+    correct: "State-Dependent Memory",
+    notes: "Main Points / Key Words: Internal states / mood or physiological condition / retrieval context.\n\nExplanation: Memory retrieval is enhanced when an individual's internal emotional or physical state matches their state during encoding.\n\nExample: Recalling sad memories more easily when you are currently feeling depressed."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Stored information about facts, events, and static details that you can consciously state.",
+    answers: ["Procedural Knowledge", "Declarative Knowledge", "Mental Imagery", "Propositional Theory"],
+    correct: "Declarative Knowledge",
+    notes: "Main Points / Key Words: Facts / can be stated.\n\nDefinition: Facts that can be stated, such as date of your birth, the name, etc.\n\nExplanation: Stored information about facts, events, and static details that you can consciously express.\n\nExample: Stating that the Philippines is an archipelago composed of over 7,000 islands."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Action-based knowledge about how to perform physical or cognitive tasks through steps.",
+    answers: ["Declarative Knowledge", "Mental Models", "Procedural Knowledge", "Spatial Cognition"],
+    correct: "Procedural Knowledge",
+    notes: "Main Points / Key Words: Procedures / can be implemented.\n\nDefinition: Procedures that can be implemented.\n\nExplanation: Action-based knowledge about how to perform physical or cognitive tasks through steps.\n\nExample: Riding a bicycle or typing on a keyboard without consciously thinking about each finger movement."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Internal representations of objects, sounds, or sensations not currently present to the senses.",
+    answers: ["Mental Imagery", "Analog Codes", "Functional-Equivalence Hypothesis", "Symbolic Codes"],
+    correct: "Mental Imagery",
+    notes: "Main Points / Key Words: Internal representations / objects, sounds, sensations / not currently present.\n\nDefinition: Internal representations of objects, sounds, or sensations not currently present to the senses.\n\nExplanation: Mentally recreating sensory experiences in the mind when the physical stimuli are absent.\n\nExample: Picturing what your bedroom looks like with your eyes closed."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Mental representations that physically resemble the actual object they represent.",
+    answers: ["Symbolic Codes", "Analog Codes", "Propositional Theory", "Haptic Imagery"],
+    correct: "Analog Codes",
+    notes: "Main Points / Key Words: Mental representations / physically resemble / actual object.\n\nDefinition: Mental representations that physically resemble the actual object they represent.\n\nExplanation: Mental images that preserve the structural and spatial qualities of real-world objects.\n\nExample: Visualizing clock hands moving to tell time, similar to an analog clock."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Arbitrary representations that stand for something without physically resembling it.",
+    answers: ["Analog Codes", "Symbolic Codes", "Visual Imagery", "Spatial Imagery"],
+    correct: "Symbolic Codes",
+    notes: "Main Points / Key Words: Arbitrary representations / stand for something / without physically resembling.\n\nDefinition: Arbitrary representations that stand for something without physically resembling it.\n\nExplanation: Abstract symbols or words used to represent real concepts without looking like them.\n\nExample: Reading or thinking of the word \"D-O-G\" to represent a dog."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Theory stating that knowledge is stored as abstract relationships or meanings rather than actual images or words.",
+    answers: ["Functional-Equivalence Hypothesis", "Johnson Laird's Mental Models", "Propositional Theory", "Demand Characteristics"],
+    correct: "Propositional Theory",
+    notes: "Main Points / Key Words: Abstract relationships or meanings / rather than actual images or words.\n\nDefinition: Storing knowledge as abstract relationships or meanings rather than actual images or words.\n\nExplanation: A view holding that mental concepts are stored as underlying logical statements rather than picture-like visual images.\n\nExample: Storing the concept [Under(Cat, Table)] instead of storing a mental photo of a cat."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "States that mental images function similarly to actual visual perception, even if they aren't identical.",
+    answers: ["Propositional Theory", "Functional-Equivalence Hypothesis", "Representational Neglect", "Practice Effect in Mental Rotation"],
+    correct: "Functional-Equivalence Hypothesis",
+    notes: "Main Points / Key Words: Functions similarly / actual visual perception.\n\nDefinition: Mental images function similarly to actual visual perception, even if they aren't identical.\n\nExplanation: The principle that processing mental images activates similar brain processes as looking at real objects.\n\nExample: Scanning a mental map of your neighborhood takes longer for greater distances, just like looking at a real map."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Turning or rotating a visual mental image in your mind.",
+    answers: ["Mental Rotation", "Spatial Cognition", "Representational Neglect", "Alignment Heuristic"],
+    correct: "Mental Rotation",
+    notes: "Main Points / Key Words: Turning or rotating / visual mental image.\n\nDefinition: Turning or rotating a visual mental image in your mind.\n\nExplanation: Mentally manipulating an object by shifting its orientation in 2D or 3D space.\n\nExample: Mentally turning a piece of furniture to see if it will fit through a doorway."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Improvement in rotation speed and accuracy due to repeated practice or familiarity.",
+    answers: ["Functional-Equivalence Hypothesis", "Practice Effect in Mental Rotation", "Demand Characteristics", "Right-Angle Bias"],
+    correct: "Practice Effect in Mental Rotation",
+    notes: "Main Points / Key Words: Improvement in rotation speed / repeated practice or familiarity.\n\nDefinition: Improvement in rotation speed and accuracy due to repeated practice or familiarity.\n\nExplanation: Becoming faster and more precise at turning visual images mentally through practice.\n\nExample: Becoming faster at solving 3D puzzle blocks after playing a spatial game repeatedly."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Experiencing mental images in the auditory cortex without external sound inputs.",
+    answers: ["Haptic Imagery", "Auditory Hallucinations", "Representational Neglect", "Visual Imagery"],
+    correct: "Auditory Hallucinations",
+    notes: "Main Points / Key Words: Experiencing mental images / auditory cortex / without external sound inputs.\n\nDefinition: Experiencing mental images in the auditory cortex without external sound inputs.\n\nExplanation: Perceiving sound-based mental representations without any real acoustic stimulus present.\n\nExample: Hearing someone call your name when no one is around."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "A condition where a person ignores one half of their mental image when describing a scene.",
+    answers: ["Auditory Hallucinations", "Representational Neglect", "Demand Characteristics", "Rotation Heuristic"],
+    correct: "Representational Neglect",
+    notes: "Main Points / Key Words: Ignores one half / mental image / describing a scene.\n\nDefinition: A condition where a person ignores one half of their mental image when describing a scene.\n\nExplanation: A neurological condition causing individuals to overlook or omit one side of their internal spatial imagination.\n\nExample: Visualizing your living room but only describing the furniture on the right side while completely ignoring the left."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Implicit cues from experimenters that subtly signal to participants how they are expected to perform.",
+    answers: ["Demand Characteristics", "Symmetry Heuristic", "Propositional Theory", "Right-Angle Bias"],
+    correct: "Demand Characteristics",
+    notes: "Main Points / Key Words: Implicit cues / subtly signal / expected to perform.\n\nDefinition: Implicit cues from experimenters that subtly signal to participants how they are expected to perform.\n\nExplanation: Unintended experimenter hints that influence study subjects to alter their behavior to match hypotheses.\n\nExample: A participant moving slower on a mental imagery task because they sensed the researcher expected it to be difficult."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Knowledge structures people construct based on their own beliefs and implicit theories to understand experiences.",
+    answers: ["Johnson Laird's Mental Models", "Propositional Theory", "Declarative Knowledge", "Spatial Cognition"],
+    correct: "Johnson Laird's Mental Models",
+    notes: "Main Points / Key Words: Knowledge structures / beliefs and implicit theories / understand experiences.\n\nDefinition: Knowledge structures people construct based on their own beliefs and implicit theories to understand experiences.\n\nExplanation: Working mental diagrams built using personal assumptions to reason through complex systems.\n\nExample: Drawing a mental diagram of how a car engine works based on personal assumptions rather than mechanical facts."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Mental representation based on the sense of touch.",
+    answers: ["Visual Imagery", "Spatial Imagery", "Haptic Imagery", "Analog Codes"],
+    correct: "Haptic Imagery",
+    notes: "Main Points / Key Words: Mental representation / sense of touch.\n\nDefinition: Mental representation based on the sense of touch.\n\nExplanation: Internal representations that simulate tactile qualities like texture, temperature, or pressure.\n\nExample: Feeling the rough texture of sandpaper in your mind without touching it."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Brain structure that specializes in representing and manipulating visuospatial knowledge.",
+    answers: ["Left Hemisphere", "Right Hemisphere", "Auditory Cortex", "Propositional Store"],
+    correct: "Right Hemisphere",
+    notes: "Main Points / Key Words: Specializes / visuospatial knowledge.\n\nDefinition: Specializes in representing and manipulating visuospatial knowledge.\n\nExplanation: The side of the brain that primarily processes visual layouts, shapes, and spatial orientations.\n\nExample: Mentally rotating a 3D block to see if it fits into a matching slot."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Brain structure that specializes in representing and manipulating verbal and symbol-based knowledge.",
+    answers: ["Right Hemisphere", "Left Hemisphere", "Visual Cortex", "Spatial Store"],
+    correct: "Left Hemisphere",
+    notes: "Main Points / Key Words: Specializes / verbal and symbol-based knowledge.\n\nDefinition: Specializes in representing and manipulating verbal and symbol-based knowledge.\n\nExplanation: The side of the brain responsible for analyzing language structures, numbers, and symbolic logic.\n\nExample: Mentally working through a written grammar rule or word puzzle."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Mentally representing physical appearance attributes like color and shape.",
+    answers: ["Spatial Imagery", "Visual Imagery", "Haptic Imagery", "Analog Codes"],
+    correct: "Visual Imagery",
+    notes: "Main Points / Key Words: Mentally representing physical appearance / color and shape.\n\nDefinition: Mentally representing physical appearance attributes like color and shape.\n\nExplanation: Internal representations focusing strictly on visual properties like hue, form, and texture.\n\nExample: Picture the shade of red on a ripe strawberry."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Mentally representing spatial dimensions, distances, depth, and orientations.",
+    answers: ["Visual Imagery", "Spatial Imagery", "Spatial Cognition", "Relative-Position Heuristic"],
+    correct: "Spatial Imagery",
+    notes: "Main Points / Key Words: Mentally representing spatial dimensions / distances, depth, orientations.\n\nDefinition: Mentally representing spatial dimensions, distances, depth, and orientations.\n\nExplanation: Internal representations focused on location relationships, perspective, and distance.\n\nExample: Estimating how far away a doorway is from where you are sitting."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Acquiring, organizing, and using knowledge about objects and layout in 2D or 3D space.",
+    answers: ["Spatial Imagery", "Spatial Cognition", "Johnson Laird's Mental Models", "Procedural Knowledge"],
+    correct: "Spatial Cognition",
+    notes: "Main Points / Key Words: Acquiring, organizing, using knowledge / layout in 2D or 3D space.\n\nDefinition: Acquiring, organizing, and using knowledge about objects and layout in 2D or 3D space.\n\nExplanation: How minds process, remember, and navigate physical environments and geometric spaces.\n\nExample: Navigating through a familiar shopping mall without looking at a map."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Distorting street intersections in mental maps to make them look closer to 90-degree angles than they actually are.",
+    answers: ["Symmetry Heuristic", "Right-Angle Bias", "Rotation Heuristic", "Alignment Heuristic"],
+    correct: "Right-Angle Bias",
+    notes: "Main Points / Key Words: Distorting street intersections / closer to 90-degree angles.\n\nDefinition: Distorting street intersections in mental maps to make them look closer to 90-degree angles than they actually are.\n\nExplanation: A cognitive shortcut that forces angled crossroads to look like neat perpendicular turns in memory.\n\nExample: Picturing a slanted 4-way crossroad as a perfect perpendicular cross."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Thinking geographic shapes or boundaries are more symmetrical than their actual irregular physical form.",
+    answers: ["Right-Angle Bias", "Symmetry Heuristic", "Alignment Heuristic", "Relative-Position Heuristic"],
+    correct: "Symmetry Heuristic",
+    notes: "Main Points / Key Words: Thinking geographic shapes / more symmetrical than actual form.\n\nDefinition: Thinking geographic shapes or boundaries are more symmetrical than their actual irregular physical form.\n\nExplanation: A mental shortcut that smooths out uneven terrain borders to make them appear balanced.\n\nExample: Drawing the border of a country or state as a smooth, balanced shape rather than jagged."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Mentally rotating slightly slanted boundaries or figures to make them strictly vertical or horizontal.",
+    answers: ["Alignment Heuristic", "Rotation Heuristic", "Right-Angle Bias", "Symmetry Heuristic"],
+    correct: "Rotation Heuristic",
+    notes: "Main Points / Key Words: Mentally rotating slightly slanted boundaries / strictly vertical or horizontal.\n\nDefinition: Mentally rotating slightly slanted boundaries or figures to make them strictly vertical or horizontal.\n\nExplanation: Straightening out tilted geographical lines in memory so they align directly up-down or side-to-side.\n\nExample: Picturing California's coastline as running straight north-to-south instead of angled."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Distorting independent landmarks or boundaries so they align neatly with one another.",
+    answers: ["Rotation Heuristic", "Alignment Heuristic", "Relative-Position Heuristic", "Right-Angle Bias"],
+    correct: "Alignment Heuristic",
+    notes: "Main Points / Key Words: Distorting independent landmarks / align neatly with one another.\n\nDefinition: Distorting independent landmarks or boundaries so they align neatly with one another.\n\nExplanation: Adjusting relative map locations so separate geographical landmasses line up evenly.\n\nExample: Incorrectly thinking North America and Europe sit along the exact same horizontal line."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 13-14",
+    question: "Distorting the positions of landmarks on mental maps to reflect general conceptual knowledge rather than actual physical locations.",
+    answers: ["Alignment Heuristic", "Symmetry Heuristic", "Relative-Position Heuristic", "Rotation Heuristic"],
+    correct: "Relative-Position Heuristic",
+    notes: "Main Points / Key Words: Distorting positions / general conceptual knowledge rather than actual physical locations.\n\nDefinition: Distorting the positions of landmarks on mental maps to reflect general conceptual knowledge rather than actual physical locations.\n\nExplanation: Placing map points based on broad knowledge associations rather than actual geographical coordinates.\n\nExample: Thinking Reno, Nevada is further east than San Diego, California, simply because Nevada is east of California overall."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Groupings that occur naturally in the physical world.",
+    answers: ["Artifact Categories", "Natural Categories", "Ad Hoc Categories", "Schemas"],
+    correct: "Natural Categories",
+    notes: "Main Points / Key Words: Groupings / occur naturally / physical world.\n\nExplanation: Classifications of objects or organisms that exist in nature independent of human invention.\n\nExample: Birds, trees, and mammals."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Groupings designed or invented by humans to serve specific purposes or functions.",
+    answers: ["Natural Categories", "Ad Hoc Categories", "Artifact Categories", "Propositions"],
+    correct: "Artifact Categories",
+    notes: "Main Points / Key Words: Designed or invented by humans / specific purposes.\n\nExplanation: Man-made objects classified together based on their functional utility or structural design.\n\nExample: Knives, kitchen utensils, or vehicles."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Categories created spontaneously on the spot for a specific, temporary purpose.",
+    answers: ["Ad Hoc Categories", "Artifact Categories", "Basic Level (Natural Level)", "Exemplars"],
+    correct: "Ad Hoc Categories",
+    notes: "Main Points / Key Words: Created spontaneously / spot/temporary purpose.\n\nExplanation: Flexible groupings formed in response to an immediate, goal-directed situation rather than stored long-term.\n\nExample: \"Things you can write on\" or \"things to grab in a house fire\"."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "The preferred, middle level of specificity in a hierarchy that is neither too abstract nor too specific.",
+    answers: ["Ad Hoc Categories", "Basic Level (Natural Level)", "Prototype Theory", "Defining Features"],
+    correct: "Basic Level (Natural Level)",
+    notes: "Main Points / Key Words: Preferred, middle level / neither too abstract nor too specific.\n\nExplanation: The default level of categorization people naturally use to name and identify objects in daily life.\n\nExample: Calling an object an \"apple\" rather than a \"fruit\" (superordinate) or a \"Red Delicious\" (subordinate)."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Features that are necessary and sufficient to uniquely define membership in a category.",
+    answers: ["Defining Features (Feature-Based View)", "Prototype Theory", "Essentialism", "Exemplars"],
+    correct: "Defining Features (Feature-Based View)",
+    notes: "Main Points / Key Words: Necessary and sufficient / uniquely define membership.\n\nExplanation: A traditional view where an item must possess every specific required attribute to belong to a class.\n\nExample: A triangle must have three sides; if it lacks three sides, it cannot be a triangle."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Grouping items based on their similarity to an averaged, ideal model with characteristic features.",
+    answers: ["Exemplars", "Theory-Based View", "Prototype Theory", "Defining Features (Feature-Based View)"],
+    correct: "Prototype Theory",
+    notes: "Main Points / Key Words: Averaged, ideal model / characteristic features.\n\nExplanation: Classifying new objects by comparing them to an abstracted mental average representing the typical member of that group.\n\nExample: Picturing a standard songbird with wings that flies when thinking of the general concept \"bird\"."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Specific, actual instances of a category stored in memory, rather than a single average prototype.",
+    answers: ["Prototype Theory", "Exemplars", "Propositions", "Schemas"],
+    correct: "Exemplars",
+    notes: "Main Points / Key Words: Specific, actual instances / stored in memory / rather than single average.\n\nExplanation: Remembering multiple real-world examples encountered in the past to determine category membership for new items.\n\nExample: Thinking specifically of songbirds, birds of prey, or waterfowl when considering different types of birds."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Categorizing concepts using implicit theories or general background knowledge about how the world works.",
+    answers: ["Theory-Based View", "Essentialism", "Cognitive Economy", "Inheritance"],
+    correct: "Theory-Based View",
+    notes: "Main Points / Key Words: Implicit theories / general background knowledge / how the world works.\n\nExplanation: Using conceptual understanding and cause-and-effect reasoning to group objects together rather than physical similarity.\n\nExample: Defining a \"good sport\" based on how they treat opponents and react to losing."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "The belief that certain categories possess an underlying, unobservable intrinsic reality or essence.",
+    answers: ["Theory-Based View", "Essentialism", "Propositions", "Domain-Specific (Modularity of Mind)"],
+    correct: "Essentialism",
+    notes: "Main Points / Key Words: Underlying, unobservable intrinsic reality / essence.\n\nExplanation: The assumption that members of a natural category share a core, fundamental nature that makes them what they are.\n\nExample: Believing a lion has an innate \"lion-ness\" that makes it what it is regardless of appearance."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Storing general information efficiently at the highest possible level of a hierarchy to minimize redundancy.",
+    answers: ["Inheritance", "Cognitive Economy", "ACT-R Model", "Nondeclarative Knowledge"],
+    correct: "Cognitive Economy",
+    notes: "Main Points / Key Words: General info efficiently / highest possible level / minimize redundancy.\n\nExplanation: An organizational principle where shared features are stored only once under broad category nodes to save mental storage.\n\nExample: Storing \"has wings\" under the high-level node \"Bird\" so every specific bird inherits the trait automatically."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "The principle where lower-level nodes automatically take on the attributes of higher-level nodes in a network.",
+    answers: ["Cognitive Economy", "Inheritance", "Three Stages of Proceduralization", "Unit States"],
+    correct: "Inheritance",
+    notes: "Main Points / Key Words: Lower-level nodes automatically take on attributes / higher-level nodes.\n\nExplanation: The mechanism by which specific sub-concepts automatically acquire all features assigned to their overarching category.\n\nExample: Knowing a canary breathes oxygen because it inherits that trait from the higher category \"Animal\"."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Flexible mental frameworks of general knowledge that encompass concepts, attributes, and context.",
+    answers: ["Scripts", "Schemas", "Productions (\"If-Then\" Rules)", "Parallel Distributed Processing Models"],
+    correct: "Schemas",
+    notes: "Main Points / Key Words: Flexible mental frameworks / encompass concepts, attributes, context.\n\nExplanation: Complex cognitive structures that bundle interrelated knowledge and expectations about objects, settings, or domains.\n\nExample: Having a schema for what a typical house looks like, including rooms, doors, and furniture."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "A type of schema containing information about the specific sequential order in which events occur.",
+    answers: ["Schemas", "Scripts", "Three Stages of Proceduralization", "ACT-R Model"],
+    correct: "Scripts",
+    notes: "Main Points / Key Words: Specific sequential order / events occur.\n\nExplanation: An event schema that outlines the expected step-by-step order of actions in a familiar social routine.\n\nExample: Following a restaurant script: entering, being seated, ordering, eating, paying the bill, and exiting."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Representations of \"how to do things\" acquired through practice until it becomes implicit and hard to state explicitly.",
+    answers: ["Nondeclarative Knowledge", "Procedural Knowledge", "Propositions", "Domain-General"],
+    correct: "Procedural Knowledge",
+    notes: "Main Points / Key Words: Representations of how to do things / implicit and hard to state explicitly.\n\nExplanation: Skill-based mental processes that execute actions automatically through experience without needing conscious verbalization.\n\nExample: Tying shoelaces or executing a gymnastics routine."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "A set of rules governing a procedure where the \"if\" clause contains conditions and the \"then\" clause contains resulting actions.",
+    answers: ["Three Stages of Proceduralization", "Productions (\"If-Then\" Rules)", "Propositions", "Cognitive Economy"],
+    correct: "Productions (\"If-Then\" Rules)",
+    notes: "Main Points / Key Words: Rules governing a procedure / conditions and resulting action(s).\n\nExplanation: Conditional statements used by procedural systems to trigger cognitive or motor responses when specific criteria are satisfied.\n\nExample: If the traffic light is red, then hit the brake pedal."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Implicit mental representations including perceptual/motor skills, associative/non-associative learning, and priming.",
+    answers: ["Procedural Knowledge", "Nondeclarative Knowledge", "Essentialism", "Schemas"],
+    correct: "Nondeclarative Knowledge",
+    notes: "Main Points / Key Words: Implicit mental representations / perceptual/motor skills, associative learning, priming.\n\nExplanation: Unconscious memory structures that influence performance and behavior without conscious recollection.\n\nExample: Experiencing faster processing of a word due to recent subtle exposure."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Cognitive framework that synthesizes semantic networks (declarative knowledge) and production systems (procedural knowledge) into one unified system.",
+    answers: ["Parallel Distributed Processing Models", "ACT-R Model", "Three Stages of Proceduralization", "Domain-General"],
+    correct: "ACT-R Model",
+    notes: "Main Points / Key Words: Synthesizes semantic networks and production systems / unified system.\n\nExplanation: A comprehensive cognitive architecture combining factual network knowledge with conditional procedural rules.\n\nExample: Processing a math problem by pulling factual number meanings from declarative storage and executing operations via production rules."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "The smallest units of declarative knowledge that can be judged as either true or false.",
+    answers: ["Unit States", "Propositions", "Defining Features (Feature-Based View)", "Exemplars"],
+    correct: "Propositions",
+    notes: "Main Points / Key Words: Smallest units / judged as either true or false.\n\nExplanation: Fundamental relational mental statements that carry assertion value in declarative cognitive models.\n\nExample: Asserting [Is_a(Canary, Bird)] to state that a canary is a bird."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "The learning progression consisting of the Cognitive Stage, Associative Stage, and Autonomous Stage.",
+    answers: ["Three Stages of Proceduralization", "Productions (\"If-Then\" Rules)", "ACT-R Model", "Parallel Distributed Processing Models"],
+    correct: "Three Stages of Proceduralization",
+    notes: "Main Points / Key Words: Cognitive stage, Associative stage, Autonomous stage.\n\nExplanation: The progression a learner moves through when transitioning a new skill from deliberate verbal effort to automatic execution.\n\nExample: Transitioning from thinking through every step of driving a car to steering and braking fluidly on autopilot."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Propose that cognitive operations occur across massive networks of interconnected, neuron-like units processing information in parallel.",
+    answers: ["ACT-R Model", "Parallel Distributed Processing Models", "Domain-Specific (Modularity of Mind)", "Cognitive Economy"],
+    correct: "Parallel Distributed Processing Models",
+    notes: "Main Points / Key Words: Massive networks / interconnected, neuron-like units / in parallel.\n\nExplanation: A connectionist framework where knowledge is stored as activation patterns distributed across interconnected simple nodes working simultaneously.\n\nExample: Activating a widespread neural pattern across multiple units to recognize a face instantly."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Refers to how neurons/units can be inactive, excitatory (increasing activation probability), or inhibitory (decreasing activation probability).",
+    answers: ["Propositions", "Unit States", "Domain-General", "Inheritance"],
+    correct: "Unit States",
+    notes: "Main Points / Key Words: Neurons/units / inactive, excitatory, inhibitory.\n\nExplanation: The functional operational states of connectionist nodes determining whether signals pass along neighboring connections.\n\nExample: An excitatory node boosting the signal of connected nodes while an inhibitory node dampens surrounding activity."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "The perspective that cognition relies on underlying, universal mechanisms across all types of thinking.",
+    answers: ["Domain-Specific (Modularity of Mind)", "Domain-General", "Theory-Based View", "Essentialism"],
+    correct: "Domain-General",
+    notes: "Main Points / Key Words: Cognition relies on / universal mechanisms / across all types of thinking.\n\nExplanation: The perspective that central cognitive processes operate identically regardless of the content or task domain.\n\nExample: Applying the same general working memory resources to solve both a visual puzzle and a language exercise."
+  },
+  {
+    type: "quiz",
+    category: "MODULE 15-16",
+    question: "Proposed by Jerry Fodor (1983); the view that the mind consists of discrete, independent modules specialized for specific cognitive functions.",
+    answers: ["Domain-General", "Domain-Specific (Modularity of Mind)", "Parallel Distributed Processing Models", "ACT-R Model"],
+    correct: "Domain-Specific (Modularity of Mind)",
+    notes: "Main Points / Key Words: Mind consists of discrete, independent modules / specialized for specific functions.\n\nExplanation: The view that human cognition relies on specialized, self-contained brain processing units tuned to handle distinct types of input.\n\nExample: Utilizing a specialized, isolated visual processing region solely for interpreting human facial features."
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let streak = 0;
+let isMuted = false;
+let quizData = [];
+let currentNotes = "";
+let wrongQuestions = [];
+let bookmarkedQuestions = [];
+let userAnswers = {};
+let categoryStats = {};
+let currentReviewMode = 'answers';
+
+let currentFontSize = "100%";
+let currentFontFamily = "'Poppins', sans-serif";
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    const isOpen = dropdown.classList.contains("open");
+    
+    document.querySelectorAll(".custom-dropdown").forEach(d => d.classList.remove("open"));
+    
+    if (!isOpen) {
+        dropdown.classList.add("open");
+    }
+}
+
+window.addEventListener('click', function(e) {
+    if (!e.target.closest('.custom-dropdown')) {
+        document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('open'));
+    }
+});
+
+function populateCategories() {
+    const categoryList = document.getElementById("categoryList");
+    const categories = ["All", ...new Set(questions.map(q => q.category).filter(Boolean))];
+    
+    categoryList.innerHTML = "";
+    categories.forEach(cat => {
+        let div = document.createElement("div");
+        div.className = "dropdown-list-item";
+        if (cat === "All") div.classList.add("selected");
+        
+        let labelText = cat === "All" ? "All Categories" : cat;
+        div.innerHTML = `<span>${labelText}</span><div class="radio-icon"></div>`;
+        
+        div.onclick = function() {
+            document.getElementById("selectedCategoryText").textContent = labelText;
+            document.getElementById("categorySelectValue").value = cat;
+            categoryList.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            toggleDropdown('categoryDropdown');
+        };
+        
+        categoryList.appendChild(div);
+    });
+}
+
+function selectFontSize(value, label, el) {
+    document.getElementById("selectedFontSizeText").textContent = label;
+    changeFontSize(value);
+    el.parentElement.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+    el.classList.add("selected");
+    toggleDropdown('fontSizeDropdown');
+}
+
+function selectFontFamily(value, label, el) {
+    document.getElementById("selectedFontFamilyText").textContent = label;
+    changeFontFamily(value);
+    el.parentElement.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+    el.classList.add("selected");
+    toggleDropdown('fontFamilyDropdown');
+}
+
+populateCategories();
+loadSettings();
+checkSavedProgress();
+
+function openSettingsModal() {
+    document.getElementById("settingsModal").classList.remove("hidden");
+}
+
+function closeSettingsModal() {
+    document.getElementById("settingsModal").classList.add("hidden");
+}
+
+function changeFontSize(size) {
+    currentFontSize = size;
+    document.documentElement.style.setProperty('--base-font-scale', size);
+    saveSettings();
+}
+
+function changeFontFamily(family) {
+    currentFontFamily = family;
+    document.documentElement.style.setProperty('--app-font', family);
+    saveSettings();
+}
+
+function toggleSound() {
+    isMuted = !isMuted;
+    updateSoundUI();
+    saveSettings();
+}
+
+function updateSoundUI() {
+    const statusText = document.getElementById("soundStatusText");
+    if(statusText) {
+        statusText.textContent = isMuted ? "OFF 🔇" : "ON 🔊";
+    }
+}
+
+function saveSettings() {
+    const settings = {
+        fontSize: currentFontSize,
+        fontFamily: currentFontFamily,
+        isMuted: isMuted
+    };
+    localStorage.setItem("quizSettings", JSON.stringify(settings));
+}
+
+function loadSettings() {
+    const saved = localStorage.getItem("quizSettings");
+    if (saved) {
+        const settings = JSON.parse(saved);
+        if (settings.fontSize) {
+            currentFontSize = settings.fontSize;
+            document.documentElement.style.setProperty('--base-font-scale', currentFontSize);
+        }
+        if (settings.fontFamily) {
+            currentFontFamily = settings.fontFamily;
+            document.documentElement.style.setProperty('--app-font', currentFontFamily);
+        }
+        if (settings.isMuted !== undefined) {
+            isMuted = settings.isMuted;
+            updateSoundUI();
+        }
+    }
+}
+
+function goHome() {
+    if (quizData.length > 0 && currentQuestion < quizData.length) {
+        saveProgress();
+    }
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("notesScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.remove("hidden");
+    checkSavedProgress();
+}
+
+function saveProgress() {
+    const state = {
+        quizData,
+        currentQuestion,
+        score,
+        streak,
+        userAnswers,
+        categoryStats,
+        wrongQuestions,
+        bookmarkedQuestions
+    };
+    localStorage.setItem("quizProgress", JSON.stringify(state));
+}
+
+function checkSavedProgress() {
+    const saved = localStorage.getItem("quizProgress");
+    if (saved) {
+        document.getElementById("resumeBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("resumeBtn").classList.add("hidden");
+    }
+}
+
+function resumeQuiz() {
+    const saved = localStorage.getItem("quizProgress");
+    if (!saved) return;
+
+    const state = JSON.parse(saved);
+    quizData = state.quizData;
+    currentQuestion = state.currentQuestion;
+    score = state.score;
+    streak = state.streak;
+    userAnswers = state.userAnswers;
+    categoryStats = state.categoryStats;
+    wrongQuestions = state.wrongQuestions;
+    bookmarkedQuestions = state.bookmarkedQuestions;
+
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("notesScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+
+    updateStreakDisplay();
+    loadQuestion();
+}
+
+function clearSavedProgress() {
+    localStorage.removeItem("quizProgress");
+    document.getElementById("resumeBtn").classList.add("hidden");
+}
+
+function restartQuiz() {
+    clearSavedProgress();
+    startQuiz(false);
+}
+
+function toggleBookmark() {
+    let q = quizData[currentQuestion];
+    if (q.type === "note") return;
+    
+    const index = bookmarkedQuestions.findIndex(item => item.question === q.question);
+    const btn = document.getElementById("bookmarkBtn");
+
+    if (index > -1) {
+        bookmarkedQuestions.splice(index, 1);
+        btn.classList.remove("bookmarked");
+        btn.textContent = "📍";
+    } else {
+        bookmarkedQuestions.push(q);
+        btn.classList.add("bookmarked");
+        btn.textContent = "📌";
+    }
+    saveProgress();
+}
+
+function updateBookmarkIcon() {
+    let q = quizData[currentQuestion];
+    const btn = document.getElementById("bookmarkBtn");
+    
+    if (q.type === "note") {
+        btn.classList.add("hidden");
+        return;
+    } else {
+        btn.classList.remove("hidden");
+    }
+
+    const isBookmarked = bookmarkedQuestions.some(item => item.question === q.question);
+    
+    if (isBookmarked) {
+        btn.classList.add("bookmarked");
+        btn.textContent = "📌";
+    } else {
+        btn.classList.remove("bookmarked");
+        btn.textContent = "📍";
+    }
+}
+
+function playSound(type) {
+    if (isMuted) return;
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+    } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    }
+}
+
+function triggerConfetti() {
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+}
+
+function shuffle(array){
+    for(let i=array.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
+    }
+}
+
+function startQuiz(randomize){
+    clearSavedProgress();
+    const selectedCategory = document.getElementById("categorySelectValue").value;
+
+    let filteredQuestions = questions;
+
+    if (selectedCategory !== "All") {
+        filteredQuestions = questions.filter(q => q.category === selectedCategory);
+    }
+
+    if (filteredQuestions.length === 0) {
+        alert("No questions found!");
+        return;
+    }
+
+    quizData = JSON.parse(JSON.stringify(filteredQuestions));
+    quizData.forEach(q => delete q.answered);
+
+    if(randomize){
+        shuffle(quizData);
+    }
+
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    categoryStats = {};
+    updateStreakDisplay();
+
+    wrongQuestions = [];
+    userAnswers = {};
+
+    saveProgress();
+    loadQuestion();
+}
+
+function updateStreakDisplay() {
+    const badge = document.getElementById("streakBadge");
+    if (streak >= 2) {
+        badge.textContent = `🔥 ${streak} in a row!`;
+        badge.classList.remove("hidden");
+    } else {
+        badge.classList.add("hidden");
+    }
+}
+
+function updateProgressBar() {
+    const totalQuizQuestions = quizData.filter(item => item.type !== "note").length;
+    let completedQuizQuestions = 0;
+
+    for (let i = 0; i <= currentQuestion; i++) {
+        if (quizData[i].type !== "note" && (quizData[i].answered || userAnswers[i] !== undefined || i < currentQuestion)) {
+            completedQuizQuestions++;
+        }
+    }
+
+    const percentage = totalQuizQuestions > 0 ? Math.min(100, (completedQuizQuestions / totalQuizQuestions) * 100) : 0;
+    document.getElementById("progressFill").style.width = `${percentage}%`;
+}
+
+function loadQuestion(){
+    updateProgressBar();
+    updateBookmarkIcon();
+
+    document.getElementById("notesBtn").classList.add("hidden");
+    document.getElementById("nextBtn").classList.add("hidden");
+    
+    if(currentQuestion > 0) {
+        document.getElementById("prevBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("prevBtn").classList.add("hidden");
+    }
+
+    let q = quizData[currentQuestion];
+    let contentArea = document.getElementById("quizContentArea");
+
+    if (q.type === "note") {
+        let noteIndex = 0;
+        let totalNotesCount = 0;
+        for(let i = 0; i <= currentQuestion; i++) {
+            if(quizData[i].type === "note") {
+                if(i === currentQuestion) {
+                    noteIndex = ++totalNotesCount;
+                } else {
+                    totalNotesCount++;
+                }
+            }
+        }
+        let totalRealNotes = quizData.filter(item => item.type === "note").length;
+
+        document.getElementById("questionNumber").textContent = `Review Note (${noteIndex} of ${totalRealNotes})`;
+
+        contentArea.innerHTML = `
+            <div class="pure-note-card">
+                <div class="pure-note-title">${q.question}</div>
+                <div class="pure-note-content">${q.notes}</div>
+            </div>
+        `;
+
+        document.getElementById("nextBtn").classList.remove("hidden");
+        document.getElementById("nextBtn").textContent = currentQuestion === quizData.length - 1 ? "Finish Review ►" : "Next ►";
+
+    } else {
+        let quizIndex = 0;
+        let totalQuizCount = 0;
+        for(let i = 0; i <= currentQuestion; i++) {
+            if(quizData[i].type !== "note") {
+                if(i === currentQuestion) {
+                    quizIndex = ++totalQuizCount;
+                } else {
+                    totalQuizCount++;
+                }
+            }
+        }
+        
+        let totalRealQuizQuestions = quizData.filter(item => item.type !== "note").length;
+
+        document.getElementById("questionNumber").textContent =
+        `Question ${quizIndex} of ${totalRealQuizQuestions}`;
+
+        contentArea.innerHTML = `
+            <h2 id="questionText">${q.question}</h2>
+            <div id="answers"></div>
+        `;
+
+        let answersDiv = document.getElementById("answers");
+
+        q.answers.forEach(answer=>{
+            let btn = document.createElement("button");
+            btn.type = "button";
+            btn.classList.add("answer");
+            btn.textContent = answer;
+
+            btn.onclick = function(){
+                selectAnswer(answer, q);
+            };
+
+            answersDiv.appendChild(btn);
+        });
+
+        if(userAnswers[currentQuestion] !== undefined) {
+            let savedAnswer = userAnswers[currentQuestion];
+            highlightAnswers(savedAnswer, q, true);
+        }
+    }
+}
+
+function selectAnswer(selectedAnswer, q) {
+    const isFirstTime = !q.answered;
+    userAnswers[currentQuestion] = selectedAnswer;
+
+    const cat = q.category || "General";
+    if (!categoryStats[cat]) {
+        categoryStats[cat] = { correct: 0, total: 0 };
+    }
+
+    if(selectedAnswer === q.correct){
+        if(isFirstTime) {
+            score++;
+            q.answered = true;
+            streak++;
+            categoryStats[cat].correct++;
+            categoryStats[cat].total++;
+            playSound('correct');
+        }
+    } else {
+        if(isFirstTime) {
+            q.answered = true;
+            streak = 0;
+            categoryStats[cat].total++;
+            playSound('wrong');
+            if(!wrongQuestions.some(item => item.question === q.question)){
+                wrongQuestions.push(q);
+            }
+        }
+    }
+
+    updateStreakDisplay();
+    updateProgressBar();
+    highlightAnswers(selectedAnswer, q, false);
+    saveProgress();
+}
+
+function highlightAnswers(selectedAnswer, q, isReview) {
+    let allButtons = document.querySelectorAll(".answer");
+
+    allButtons.forEach(b => {
+        b.disabled = true;
+
+        if(b.textContent === q.correct) {
+            if(selectedAnswer === q.correct) {
+                b.classList.add("correct");
+            } else {
+                b.classList.add("correct-answer");
+            }
+        }
+        
+        if(b.textContent === selectedAnswer && selectedAnswer !== q.correct) {
+            b.classList.add("wrong");
+        }
+    });
+
+    currentNotes = q.notes;
+    document.getElementById("notesBtn").classList.remove("hidden");
+    document.getElementById("notesBtn").onclick = function(){
+        showNotes();
+    };
+
+    let isLastQuestion = currentQuestion === quizData.length - 1;
+
+    document.getElementById("nextBtn").classList.remove("hidden");
+    document.getElementById("nextBtn").textContent = isLastQuestion ? "Finish Quiz ►" : "Next Question ►";
+}
+
+function prevQuestion() {
+    if(currentQuestion > 0) {
+        currentQuestion--;
+        saveProgress();
+        loadQuestion();
+    }
+}
+
+function showNotes(){
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("notesScreen").classList.remove("hidden");
+    document.getElementById("notesBox").textContent = currentNotes;
+}
+
+function backToQuestion(){
+    document.getElementById("notesScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+}
+
+document.getElementById("nextBtn").onclick = function(){
+    currentQuestion++;
+    saveProgress();
+    if(currentQuestion < quizData.length){
+        loadQuestion();
+    }else{
+        showScore();
+    }
+};
+
+function showScore(){
+    clearSavedProgress(); 
+    
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.remove("hidden");
+
+    const totalQuizQuestions = quizData.filter(q => q.type !== "note").length;
+    const totalNotesCount = quizData.filter(q => q.type === "note").length;
+    const retakeBtn = document.getElementById("retakeAllBtn");
+
+    if (totalQuizQuestions === 0) {
+        document.getElementById("scoreHeaderTitle").textContent = "Notes Review Finished!";
+        document.getElementById("scoreText").innerHTML = `You have successfully completed reviewing the notes!`;
+        
+        document.getElementById("analyticsCard").classList.add("hidden");
+        document.getElementById("reviewAllAnswersBtn").classList.add("hidden");
+        
+        if (totalNotesCount > 0) {
+            document.getElementById("reviewAllNotesBtn").classList.remove("hidden");
+        } else {
+            document.getElementById("reviewAllNotesBtn").classList.add("hidden");
+        }
+
+        document.getElementById("retakeWrongBtn").classList.add("hidden");
+        document.getElementById("reviewBookmarkedBtn").classList.add("hidden");
+        
+        retakeBtn.textContent = "Re-read All Notes";
+        retakeBtn.classList.remove("hidden");
+        return;
+    }
+
+    document.getElementById("scoreHeaderTitle").textContent = "Quiz Finished!";
+    document.getElementById("analyticsCard").classList.remove("hidden");
+    document.getElementById("reviewAllAnswersBtn").classList.remove("hidden");
+    
+    if (totalNotesCount > 0) {
+        document.getElementById("reviewAllNotesBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("reviewAllNotesBtn").classList.add("hidden");
+    }
+
+    retakeBtn.textContent = "Retake All Questions";
+
+    const percentage = (score / totalQuizQuestions) * 100;
+
+    if(wrongQuestions.length === 0){
+        document.getElementById("scoreText").innerHTML =
+        `Perfect Score!<br>${score} / ${totalQuizQuestions}`;
+        playSound('correct');
+        triggerConfetti();
+    } else {
+        document.getElementById("scoreText").textContent =
+        `Your Score: ${score} / ${totalQuizQuestions}`;
+        if (percentage >= 70) {
+            triggerConfetti();
+        }
+    }
+
+    const analyticsList = document.getElementById("analyticsList");
+    analyticsList.innerHTML = "";
+    for (let cat in categoryStats) {
+        let stat = categoryStats[cat];
+        let pct = Math.round((stat.correct / stat.total) * 100);
+        let status = pct >= 70 ? "🟢" : "🔴";
+        
+        let div = document.createElement("div");
+        div.className = "analytics-item";
+        div.innerHTML = `<span><strong>${cat}:</strong> ${stat.correct}/${stat.total}</span> <span>${pct}% ${status}</span>`;
+        analyticsList.appendChild(div);
+    }
+
+    if(wrongQuestions.length > 0){
+        document.getElementById("retakeWrongBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("retakeWrongBtn").classList.add("hidden");
+    }
+
+    if(bookmarkedQuestions.length > 0){
+        document.getElementById("reviewBookmarkedBtn").classList.remove("hidden");
+    } else {
+        document.getElementById("reviewBookmarkedBtn").classList.add("hidden");
+    }
+}
+
+function showDetailedReview(mode) {
+    currentReviewMode = mode || 'answers';
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("detailedReviewScreen").classList.remove("hidden");
+
+    const titleEl = document.getElementById("detailedReviewTitle");
+    const subtitleEl = document.getElementById("detailedReviewSubtitle");
+
+    if (currentReviewMode === 'notes') {
+        titleEl.textContent = "All Notes & Explanations";
+        subtitleEl.textContent = "Review all the stand-alone notes and key takeaways:";
+    } else {
+        titleEl.textContent = "Detailed Review";
+        subtitleEl.textContent = "Review your answers and detailed notes for each question:";
+    }
+
+    const reviewCategoryList = document.getElementById("reviewCategoryList");
+    let availableCategories = quizData;
+    if (currentReviewMode === 'notes') {
+        availableCategories = quizData.filter(q => q.type === "note");
+    }
+    
+    const categories = ["All", ...new Set(availableCategories.map(q => q.category).filter(Boolean))];
+    
+    reviewCategoryList.innerHTML = "";
+    categories.forEach(cat => {
+        let div = document.createElement("div");
+        div.className = "dropdown-list-item";
+        if (cat === "All") div.classList.add("selected");
+        
+        let labelText = cat === "All" ? "All Categories" : cat;
+        div.innerHTML = `<span>${labelText}</span><div class="radio-icon"></div>`;
+        
+        div.onclick = function() {
+            document.getElementById("selectedReviewCategoryText").textContent = labelText;
+            document.getElementById("reviewCategoryFilterValue").value = cat;
+            reviewCategoryList.querySelectorAll(".dropdown-list-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            toggleDropdown('reviewCategoryDropdown');
+            renderDetailedReviewCards();
+        };
+        
+        reviewCategoryList.appendChild(div);
+    });
+
+    renderDetailedReviewCards();
+}
+
+function renderDetailedReviewCards() {
+    const container = document.getElementById("detailedReviewContainer");
+    container.innerHTML = "";
+
+    const selectedCategory = document.getElementById("reviewCategoryFilterValue").value;
+    let reviewItemCount = 0;
+
+    quizData.forEach((q, index) => {
+        if (selectedCategory !== "All" && q.category !== selectedCategory) {
+            return;
+        }
+
+        if (currentReviewMode === 'notes') {
+            if (q.type !== "note") return;
+            reviewItemCount++;
+            const card = document.createElement("div");
+            card.className = "review-card";
+            card.innerHTML = `
+                <div class="review-card-header">
+                    <span style="font-weight: 700; color: #38bdf8;">Note #${reviewItemCount}</span>
+                </div>
+                <div class="review-q-text">${q.question}</div>
+                <div class="review-notes" style="border-left-color: #38bdf8; margin-top: 0;">${q.notes}</div>
+            `;
+            container.appendChild(card);
+        } else {
+            if (q.type === "note") return;
+
+            reviewItemCount++;
+            const userAns = userAnswers[index];
+            const isCorrect = userAns === q.correct;
+            const statusBadge = isCorrect ? "🟢 Correct" : "🔴 Incorrect";
+            
+            const card = document.createElement("div");
+            card.className = "review-card";
+            card.innerHTML = `
+                <div class="review-card-header">
+                    <span style="font-weight: 700;">Q${reviewItemCount}</span>
+                    <span>${statusBadge}</span>
+                </div>
+                <div class="review-q-text">${q.question}</div>
+                <div class="review-ans-row" style="color: ${isCorrect ? '#4ade80' : '#f87171'};">
+                    <strong>Your Answer:</strong> ${userAns || "No answer"}
+                </div>
+                ${!isCorrect ? `<div class="review-ans-row" style="color: #4ade80;"><strong>Correct Answer:</strong> ${q.correct}</div>` : ''}
+                ${q.notes ? `<div class="review-notes"><strong>Notes:</strong> ${q.notes}</div>` : ''}
+            `;
+            container.appendChild(card);
+        }
+    });
+}
+
+function backToScoreScreen() {
+    document.getElementById("detailedReviewScreen").classList.add("hidden");
+    document.getElementById("scoreScreen").classList.remove("hidden");
+}
+
+function retakeWrongQuestions(){
+    clearSavedProgress();
+    quizData = JSON.parse(JSON.stringify(wrongQuestions));
+    quizData.forEach(q => delete q.answered);
+
+    wrongQuestions = [];
+    userAnswers = {};
+    categoryStats = {};
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    updateStreakDisplay();
+
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+    
+    saveProgress();
+    loadQuestion();
+}
+
+function reviewBookmarkedQuestions(){
+    clearSavedProgress();
+    quizData = JSON.parse(JSON.stringify(bookmarkedQuestions));
+    quizData.forEach(q => delete q.answered);
+
+    wrongQuestions = [];
+    userAnswers = {};
+    categoryStats = {};
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    updateStreakDisplay();
+
+    document.getElementById("scoreScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+    
+    saveProgress();
+    loadQuestion();
+}
+</script>
+
+</body>
+</html>
